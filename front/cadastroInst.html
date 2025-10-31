@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Cadastro Instituição</title>
+  <title>Instituição</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <!-- Importa Bootstrap Icons -->
@@ -14,8 +14,9 @@
   <div class="container py-5">
     <form>
       <!-- título da página -->
-      <h2 class="text-center mb-4">Cadastro das Instituições</h2>
+      <h2 class="text-center mb-4">Instituições</h2>
       <h5 class="text-center mb-4 text-muted">Cadastre suas instituições de trabalho</h5>
+      <h5 class="text-center mb-4 text-muted">Favor preencher todos os campos</h5>
       <!-- campo de cadastro -->
       <div class="mb-3">
         <label for="instituicao1" class="form-label">Instituição de Ensino</label>
@@ -23,12 +24,10 @@
       </div>
       <!-- botão adicionar instituição -->
       <div class="mb-4">
-        <button type="button" class="btn btn-outline-secondary btn-sm">
-          Adicionar Instituição +
-        </button>
+        <button type="button" id="btnInst" class="btn btn-outline-secondary btn-sm">Adicionar Instituição +</button>
       </div>
       <!-- tabela das instituições cadastradas -->
-      <h5 class="mb-3 text-center text-muted">Instituições já cadastradas</h5>
+      <h5 class="mb-3 text-center text-muted">Instituições Cadastradas</h5>
       <div class="table-responsive mb-4">
         <table class="table table-striped align-middle text-center">
           <thead class="table-secondary">
@@ -42,14 +41,14 @@
             <tr>
               <td>Universidade Federal do ABC</td>
               <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Disciplinas</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
+                <button type="button" id="btnCadInst" class="btn btn-sm btn-primary me-2">Cadastrar Cursos</button>
+                <button type="button" id="btnexcluirInst" class="btn btn-sm btn-danger">Excluir</button>
               </td>
             </tr>
             <tr>
               <td>Instituto Federal de São Paulo</td>
               <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Disciplinas</button>
+                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Cursos</button>
                 <button type="button" class="btn btn-sm btn-danger">Excluir</button>
               </td>
             </tr>
@@ -58,7 +57,7 @@
       </div>
       <!-- botão página inicial centralizado -->
       <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-outline-secondary">
+        <button type="submit" id="tbnInicial" class="btn btn-outline-secondary">
           <i class="bi bi-house-door me-1"></i> Página Inicial
         </button>
       </div>
