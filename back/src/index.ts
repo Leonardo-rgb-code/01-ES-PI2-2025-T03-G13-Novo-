@@ -1,5 +1,7 @@
 import express, {Request, Response} from "express";
 import cors from "cors"
+import cursoRoutes from './cursos'; 
+import disciplinaRoutes from './disciplinas';
 
 const app = express();
 //express é a biblioteca que facilita a criação do servidor web
@@ -22,6 +24,9 @@ let usuarios = [
 app.listen(3000, () => {
     console.log("Servidor ativo na porta 3000");
 });
+
+app.use('/cursos', cursoRoutes);
+app.use('/disciplinas', disciplinaRoutes);
 
 app.post("/usuarios", (req:Request, res:Response) => {
     let usuario = req.body;
