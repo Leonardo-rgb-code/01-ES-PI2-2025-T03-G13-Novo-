@@ -43,7 +43,8 @@ async function login(){
 })
 .then(data => {
   console.log("Login feito com sucesso", data);
-//   window.location.href = "paginaInicial.html";
+  localStorage.setItem("usuarioLogado", "true");
+  window.location.href = "../paginaInicial/paginaInicial.html";
 }) 
 
 }

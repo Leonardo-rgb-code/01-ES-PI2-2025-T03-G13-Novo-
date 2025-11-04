@@ -113,3 +113,11 @@ if (cursoSelecionado) {
 } else {
     document.getElementById('nomeCursoTitulo').textContent = "Engenharia de Computação";
 }
+
+const usuario = localStorage.getItem("usuarioLogado");
+console.log(usuario)
+
+if (!usuario) {
+  // usuário não está logado → redireciona para login
+  window.location.href = "../login/login.html";
+}
