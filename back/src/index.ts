@@ -4,6 +4,7 @@ import cursoRoutes from './cursos';
 import disciplinaRoutes from './disciplinas';
 import redefSenhaRoutes from './redefsenha';
 import componentesNotasRoutes from './componenteNotas';
+import instituicoesRouter from './cadastroInstituicoes';
 const app = express();
 //express é a biblioteca que facilita a criação do servidor web
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use('/cursos', cursoRoutes);
 app.use('/disciplinas', disciplinaRoutes);
 app.use('/senha', redefSenhaRoutes);
 app.use('/notas', componentesNotasRoutes);
+app.use('/api/instituicoes', instituicoesRouter);
 app.post("/usuarios", (req:Request, res:Response) => {
     let usuario = req.body;
     console.log(usuario)
