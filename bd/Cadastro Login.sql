@@ -18,5 +18,6 @@ CREATE TABLE IF NOT EXISTS usuarios (
 
 -- INSERÇÃO DE USUÁRIO PADRÃO (TESTE)
 
-INSERT INTO usuarios (nome, email, senha, telefone, sobrenome)
+INSERT INTO usuarios (nome, email, senha, telefone, sobrenome);
 VALUES ('Administrador', 'admin@notadez.com', 'admin123', '19999999999', 'Fulano');
+ALTER TABLE usuarios ADD COLUMN tokensenha VARCHAR(10) NULL;

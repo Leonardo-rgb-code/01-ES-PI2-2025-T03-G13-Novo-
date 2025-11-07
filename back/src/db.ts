@@ -24,7 +24,7 @@ export async function initPool(): Promise<void> {
  */
 export async function getConn(): Promise<PoolConnection> {
   if (!pool) {
-    throw new Error("❌ Pool de conexões não iniciado. Chame initPool() antes.");
+    throw new Error("Pool de conexões não iniciado. Chame initPool() antes.");
   }
   return await pool.getConnection();
 }
@@ -37,6 +37,6 @@ export async function getConn(): Promise<PoolConnection> {
 export async function closePool(): Promise<void> {
   if (pool) {
     await pool.end();
-    console.log("✅ Pool de conexões encerrado.");
+    console.log("Pool de conexões encerrado.");
   }
 }

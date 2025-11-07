@@ -1,9 +1,11 @@
 import express, {Request, Response} from "express";
 import cors from "cors"
 import loginRoutes from './login';
+import recupSeanhaRoutes from './recupSenha'
+import instituicaoRoutes from './cadastroInstituicoes'
+import redefSenhaRoutes from './redefsenha';
 // import cursoRoutes from './cursos'; 
 // import disciplinaRoutes from './disciplinas';
-// import redefSenhaRoutes from './redefsenha';
 // import componentesNotasRoutes from './componenteNotas';
 import { initPool } from "./db";
 const app = express();
@@ -28,8 +30,10 @@ async function bootstrap() {
 });
 // app.use('/cursos', cursoRoutes);
 // app.use('/disciplinas', disciplinaRoutes);
-// app.use('/senha', redefSenhaRoutes);
 // app.use('/notas', componentesNotasRoutes);
+app.use('/redefSenha', redefSenhaRoutes);
+app.use('/cadastroInstituicao', instituicaoRoutes);
+app.use('/recupSenha', recupSeanhaRoutes);
 app.use('/login', loginRoutes);
 app.post("/usuarios", (req:Request, res:Response) => {
     let usuario = req.body;
@@ -45,7 +49,7 @@ app.post("/usuarios", (req:Request, res:Response) => {
     
 
 app.get("/usuarios", (req:Request, res:Response) => {
-    res.send(usuarios);   //retorna todos os alunos
+    res.send(usuarios);   //retorna todos os usuarios
 });
 }
 

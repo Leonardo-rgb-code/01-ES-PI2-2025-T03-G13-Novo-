@@ -1,116 +1,152 @@
-// import  { Router, Request, Response } from 'express';
-// import { body, param, validationResult } from 'express-validator';
+import { getConn } from "./db";
+import { Router, Request, Response } from "express";
 
-// const router = Router();
+const router = Router();
 
-// // Interface para tipar a Instituição
-// interface Instituicao {
-//   id: number;
-//   nome: string;
-// }
+/**
+ * GET /instituicoes
+ */
+router.get("/instituicoes", async (req: Request, res: Response) => {
+  const usuarioId = req.query.usuarioId;
+  const db = await getConn();
 
-// // Array para simular banco de dados (substitua por banco real depois)
-// let instituicoes: Instituicao[] = [
-//   { id: 1, nome: 'Universidade Federal do ABC' },
-//   { id: 2, nome: 'Instituto Federal de São Paulo' }
-// ];
+  try {
+    let sql = "SELECT * FROM instituicoes";
+    let params: any[] = [];
 
-// let proximoId = 3;
+    if (usuarioId) {
+      sql += " WHERE usuarioId = ?";
+      params.push(usuarioId);
+    }
 
-// // GET - Listar todas as instituições
-// router.get('/instituicoes', (req: Request, res: Response) => {
-//   res.json(instituicoes);
-// });
+    const [rows] = await db.execute(sql, params);
+    return res.json(rows);  
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao buscar instituições", error });
+  }
+});
 
-// // GET - Buscar instituição por ID
-// router.get('/instituicoes/:id', 
-//   param('id').isInt().withMessage('ID deve ser um número'),
-//   (req: Request, res: Response) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+/**
+ * GET /instituicoes/:id
+ */
+router.get("/instituicoes/:id", async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
 
-//     const id = parseInt(req.params.id);
-//     const instituicao = instituicoes.find(inst => inst.id === id);
-    
-//     if (!instituicao) {
-//       return res.status(404).json({ message: 'Instituição não encontrada' });
-//     }
-    
-//     res.json(instituicao);
-//   }
-// );
+  if (isNaN(id)) {
+    return res.status(400).json({ message: "ID inválido" });
+  }
 
-// // POST - Criar nova instituição
-// router.post('/instituicoes',
-//   body('nome')
-//     .trim()
-//     .notEmpty().withMessage('Nome da instituição é obrigatório')
-//     .isLength({ min: 3 }).withMessage('Nome deve ter pelo menos 3 caracteres'),
-//   (req: Request, res: Response) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+  try {
+    const db = await getConn();
+    const [rows]: any = await db.execute(
+      "SELECT * FROM instituicoes WHERE id = ?",
+      [id]
+    );
 
-//     const novaInstituicao: Instituicao = {
-//       id: proximoId++,
-//       nome: req.body.nome
-//     };
-    
-//     instituicoes.push(novaInstituicao);
-//     res.status(201).json(novaInstituicao);
-//   }
-// );
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Instituição não encontrada" });
+    }
 
-// // PUT - Atualizar instituição
-// router.put('/instituicoes/:id',
-//   param('id').isInt().withMessage('ID deve ser um número'),
-//   body('nome')
-//     .trim()
-//     .notEmpty().withMessage('Nome da instituição é obrigatório')
-//     .isLength({ min: 3 }).withMessage('Nome deve ter pelo menos 3 caracteres'),
-//   (req: Request, res: Response) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+    return res.json(rows[0]);
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao buscar instituição", error });
+  }
+});
 
-//     const id = parseInt(req.params.id);
-//     const index = instituicoes.findIndex(inst => inst.id === id);
-    
-//     if (index === -1) {
-//       return res.status(404).json({ message: 'Instituição não encontrada' });
-//     }
-    
-//     instituicoes[index].nome = req.body.nome;
-//     res.json(instituicoes[index]);
-//   }
-// );
+/**
+ * POST /instituicoes
+ */
+router.post("/instituicoes", async (req: Request, res: Response) => {
+  const { nome, usuarioId } = req.body;
 
-// // DELETE - Excluir instituição
-// router.delete('/instituicoes/:id',
-//   param('id').isInt().withMessage('ID deve ser um número'),
-//   (req: Request, res: Response) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//       return res.status(400).json({ errors: errors.array() });
-//     }
+  if (!nome || nome.trim() === "") {
+    return res.status(400).json({ message: "Nome é obrigatório" });
+  }
 
-//     const id = parseInt(req.params.id);
-//     const index = instituicoes.findIndex(inst => inst.id === id);
-    
-//     if (index === -1) {
-//       return res.status(404).json({ message: 'Instituição não encontrada' });
-//     }
-    
-//     const instituicaoRemovida = instituicoes.splice(index, 1)[0];
-//     res.json({ 
-//       message: 'Instituição excluída com sucesso', 
-//       instituicao: instituicaoRemovida 
-//     });
-//   }
-// );
+  if (!usuarioId || isNaN(Number(usuarioId))) {
+    return res.status(400).json({ message: "Usuário inválido" });
+  }
 
-// export default router;
+  try {
+    const db = await getConn();
+    const [result]: any = await db.execute(
+      "INSERT INTO instituicoes (nome, usuarioId) VALUES (?, ?)",
+      [nome, usuarioId]
+    );
+
+    return res.status(201).json({
+      id: result.insertId,
+      nome,
+      usuarioId,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao cadastrar instituição", error });
+  }
+});
+
+/**
+ * PUT /instituicoes/:id
+ */
+router.put("/instituicoes/:id", async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const { nome } = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).json({ message: "ID inválido" });
+  }
+
+  if (!nome || nome.trim() === "") {
+    return res.status(400).json({ message: "Nome obrigatório" });
+  }
+
+  try {
+    const db = await getConn();
+    const [result]: any = await db.execute(
+      "UPDATE instituicoes SET nome = ? WHERE id = ?",
+      [nome, id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Instituição não encontrada" });
+    }
+
+    return res.json({ id, nome });
+  } catch (error) {
+    return res.status(500).json({ message: "Erro ao atualizar instituição", error });
+  }
+});
+
+/**
+ * DELETE /instituicoes/:id
+ */
+router.delete("/instituicoes/:id", async (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+
+  if (isNaN(id)) {
+    return res.status(400).json({ message: "ID inválido" });
+  }
+
+  try {
+    const db = await getConn();
+    const [result]: any = await db.execute(
+      "DELETE FROM instituicoes WHERE id = ?",
+      [id]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Instituição não encontrada" });
+    }
+
+    return res.json({ message: "Instituição excluída com sucesso" });
+  } catch (error: any) {
+    if (error.errno === 1451) {
+      return res.status(409).json({
+        message: "Não é possível excluir. Existe vínculo com outra tabela.",
+      });
+    }
+
+    return res.status(500).json({ message: "Erro ao excluir instituição", error });
+  }
+});
+
+export default router;
