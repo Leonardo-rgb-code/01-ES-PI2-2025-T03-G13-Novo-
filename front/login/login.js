@@ -40,13 +40,18 @@ async function login(){
             }
             return;
         }
+        return response.json()
 })
 .then(async data => {
   console.log("Login feito com sucesso", data);
+  localStorage.setItem('usuarioLogado', 'true');
+  localStorage.setItem('id', data['id']);
+  localStorage.setItem('nome', data['nome']);
 
   try {
     // Busca se existe instituição cadastrada para esse usuário no backend
     const respInst = await fetch(`../instituicao/cadastroInstituicao.html?usuarioId=${usuario.id}`);
+
 
     if (!respInst.ok) {
       throw new Error("Erro ao buscar instituições");
@@ -56,10 +61,10 @@ async function login(){
 
     // Se existir instituição -> página inicial
     if (instituicoes.length > 0) {
-      window.location.href = "../paginainicial/paginaInicial.html";
+      window.location.href = "/front/paginainicial/paginaInicial.html";
     } else {
       // Se não existir -> irá cadastrar a primeira instituição
-      window.location.href = "../instituicao/cadastroInst.html";
+      window.location.href = "/front/instituicao/cadastroInst.html";
     }
 
   } catch (erro) {

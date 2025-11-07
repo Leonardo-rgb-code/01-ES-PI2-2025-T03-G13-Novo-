@@ -7,6 +7,7 @@ interface Usuario {
     id: number;
     email: string;
     senha: string;
+    nome: string;
 }
 
 // Rota para adicionar um componente
@@ -16,7 +17,7 @@ router.post("/", async (req: Request, res: Response) => {
     try { 
         // Busca usuário pelo email
         const [rows] = await db.execute(
-            'SELECT id, email, senha FROM usuarios WHERE email = ? AND senha = ?',
+            'SELECT id, email, senha, nome FROM usuarios WHERE email = ? AND senha = ?',
             [dados['email'], dados['senha']]
         ); 
 
@@ -27,7 +28,7 @@ router.post("/", async (req: Request, res: Response) => {
             return res.status(404).send({message:"Usuário não encontrado."})
         }
 
-        const usuario = usuarios[0];
+       const usuario = usuarios[0];
        return  res.send(usuario)
 
     } catch (err) {
