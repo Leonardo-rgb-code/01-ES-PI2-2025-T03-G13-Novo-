@@ -14,7 +14,7 @@ async function login(){
     document.getElementById('erroEmailInvalido').classList.add('d-none');
     document.getElementById('erroSenhaInvalido').classList.add('d-none')
 
-    fetch("http://localhost:3000/login", {
+  fetch("http://localhost:3000/login", {
   method: "POST", // tipo da requisição
   headers: {
     "Content-Type": "application/json", // informa que o corpo é JSON
@@ -40,11 +40,43 @@ async function login(){
             }
             return;
         }
+        return response.json()
 })
-.then(data => {
+.then(async data => {
   console.log("Login feito com sucesso", data);
-//   window.location.href = "paginaInicial.html";
-}) 
+  localStorage.setItem('usuarioLogado', 'true');
+  localStorage.setItem('id', data['id']);
+  localStorage.setItem('nome', data['nome']);
+
+  try {
+    // Busca se existe instituição cadastrada para esse usuário no backend
+    fetch(`http://localhost:3000/instituicoes?userId=${data['id']}`, {
+      method: "GET",
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("Erro ao buscar instituições");
+      }
+      return response.json(); // pega o retorno do backend
+    })
+    .then(instituicoes => {
+      console.log("Instituicoes encontradas:", data);
+    // Se existir instituição -> página inicial
+    if (instituicoes.length > 0) {
+      window.location.href = "/front/paginainicial/paginaInicial.html";
+    } else {
+      // Se não existir -> irá cadastrar a primeira instituição
+      window.location.href = "/front/instituicao/cadastroInst.html";
+    }
+    })
+    .catch(err => console.error(err));
+
+  } catch (erro) {
+    console.error("Erro ao verificar instituições:", erro);
+    // alert("Erro ao verificar instituições do usuário.");
+  }
+})
+
 
 }
 function validarCamposBasicos() {

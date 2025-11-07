@@ -1,43 +1,42 @@
-import mysql from 'mysql2/promise';
+import { getConn } from "./db";
+import  { Router, Request, Response } from "express";
 
-export const db = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'projetopi',
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
-});
+const router = Router();
 
 interface Usuario {
     id: number;
     email: string;
     senha: string;
+    nome: string;
 }
 
-export async function login(email: string, senha: string): Promise<Usuario | null> {
-    try {
+// Rota para adicionar um componente
+router.post("/", async (req: Request, res: Response) => {
+    let dados = req.body;
+    const db = await getConn();
+    try { 
         // Busca usuário pelo email
         const [rows] = await db.execute(
-            'SELECT id, email, senha FROM usuarios WHERE email = ? AND senha = ?',
-            [email, senha]
-        );
+            'SELECT id, email, senha, nome FROM usuarios WHERE email = ? AND senha = ?',
+            [dados['email'], dados['senha']]
+        ); 
 
         const usuarios = rows as Usuario[];
 
         if (usuarios.length === 0) {
             // usuário não encontrado
-            return null;
+            return res.status(404).send({message:"Usuário não encontrado."})
         }
 
-        const usuario = usuarios[0];
-
-        // login válido
-        return usuario;
+       const usuario = usuarios[0];
+       return  res.send(usuario)
 
     } catch (err) {
         console.error('Erro no login:', err);
         throw err;
-    }
-}
+    } finally {
+        db.release();
+  }
+})
+
+export default router;

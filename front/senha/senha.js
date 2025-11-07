@@ -7,7 +7,7 @@ async function linkRecSenha(){
        email : email.value,
     }
 
-    fetch("http://localhost:3000/login", {
+    fetch("http://localhost:3000/recupSenha", {
   method: "POST", // tipo da requisição
   headers: {
     "Content-Type": "application/json", // informa que o corpo é JSON
@@ -49,13 +49,13 @@ function validarCamposBasicos() {
 }
 
 
-// btnEmail.addEventListener("click", (event) => {
-//   event.preventDefault(); // impede envio automático
-//   // Se tudo válido, salva o usuário
-//   if (
-//     email.value.trim() !== "" &&
-//   ) {
-//     linkRecSenha();
-//   }
-// });
+btnEmail.addEventListener("click", (event) => {
+  event.preventDefault(); // impede envio automático
+  // Se tudo válido, salva o usuário
+  if (
+    email.value.trim() !== "" 
+  ) {
+    linkRecSenha();
+  }
+});
 

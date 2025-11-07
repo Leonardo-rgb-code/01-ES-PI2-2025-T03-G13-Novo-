@@ -15,18 +15,19 @@
     <form>
       <!-- título da página -->
       <h2 class="text-center mb-4">Cursos</h2>
-      <h5 class="text-center mb-4 text-muted">Cadastre ou Edite seus Cursos Ministrados na Instituição: <strong id="nomeInstiruicaoTitulo"></strong></h5>
+      <h5 class="text-center mb-4 text-muted">Cadastre ou Edite seus Cursos Ministrados na Instituição: <strong id="nomeInstituicaoTitulo"></strong></h5>
       <h5 class="text-center mb-4 text-muted">Favor preencher todos os campos</h5>
 
       <!-- campo de cadastro -->
       <div class="mb-3">
         <label for="curso1" class="form-label">Nome do Curso</label>
         <input type="text" class="form-control" id="curso1" name="curso[]" placeholder="Informe o nome do curso" required>
+        <div id="erroCursoVazio" class="invalid-feedback d-none">Preencha o nome da Insituição.</div>
       </div>
 
       <!-- botão adicionar curso -->
       <div class="mb-4">
-        <button type="button" class="btn btn-outline-secondary btn-sm">Adicionar Curso +</button>
+        <button type="button" id="btnCurso" class="btn btn-outline-secondary btn-sm">Adicionar Curso +</button>
       </div>
 
       <!-- tabela dos cursos cadastrados -->
@@ -35,38 +36,22 @@
         <table class="table table-striped align-middle text-center">
           <thead class="table-secondary">
             <tr>
+              <th>Código do Curso</th>
               <th>Nome do Curso</th>
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Exemplo visual de linha -->
-            <tr>
-              <td>Engenharia de Computação</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Disciplinas</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Administração</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Disciplinas</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="tbodyCurso"></tbody>
         </table>
       </div>
-
-      <!-- botão página inicial centralizado -->
-      <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-outline-secondary">
-          <i class="bi bi-house-door me-1"></i> Página Inicial
-        </button>
-      </div>
-
     </form>
   </div>
+  <!-- botão página inicial centralizado -->
+  <div class="d-flex justify-content-center mt-4">
+    <button type="button" class="btn btn-outline-secondary">
+     <i class="bi bi-house-door me-1"></i> Página Inicial
+    </button>
+  </div>
+  <script src="cadastroCurso.js"></script>
 </body>
 </html>
