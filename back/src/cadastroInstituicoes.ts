@@ -6,8 +6,8 @@ const router = Router();
 /**
  * GET /instituicoes
  */
-router.get("/instituicoes", async (req: Request, res: Response) => {
-  const usuarioId = req.query.usuarioId;
+router.get("/", async (req: Request, res: Response) => {
+  const usuarioId = req.query.userId;
   const db = await getConn();
 
   try {
@@ -15,7 +15,7 @@ router.get("/instituicoes", async (req: Request, res: Response) => {
     let params: any[] = [];
 
     if (usuarioId) {
-      sql += " WHERE usuarioId = ?";
+      sql += " WHERE usuario_id = ?";
       params.push(usuarioId);
     }
 

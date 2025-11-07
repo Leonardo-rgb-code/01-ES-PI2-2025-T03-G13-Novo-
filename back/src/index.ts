@@ -32,7 +32,7 @@ async function bootstrap() {
 // app.use('/disciplinas', disciplinaRoutes);
 // app.use('/notas', componentesNotasRoutes);
 app.use('/redefSenha', redefSenhaRoutes);
-app.use('/cadastroInstituicao', instituicaoRoutes);
+app.use('/instituicoes', instituicaoRoutes);
 app.use('/recupSenha', recupSeanhaRoutes);
 app.use('/login', loginRoutes);
 app.post("/usuarios", (req:Request, res:Response) => {

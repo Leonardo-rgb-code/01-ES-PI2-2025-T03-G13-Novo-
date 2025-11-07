@@ -3,16 +3,15 @@ verificarLogin();
 // verifica se está logado
 function verificarLogin() {
   const usuarioLogado = localStorage.getItem("usuarioLogado");
-
-  if (!usuarioLogado || usuarioLogado !== "true") {
-    alert("Você precisa estar logado para acessar esta página.");
+    if (usuarioLogado != "true") {
+    alert("Usuário não identificado. Faça login novamente.");
     window.location.href = "../login/login.html";
   }
 }
 
 // pega usuarioId da URL
 const urlParams = new URLSearchParams(window.location.search);
-const usuarioId = urlParams.get("usuarioId");
+const usuarioId = localStorage.getItem("id");
 
 if (!usuarioId) {
   alert("Erro: usuário não identificado. Faça login novamente.");
