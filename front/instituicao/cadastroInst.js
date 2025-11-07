@@ -1,149 +1,158 @@
+verificarLogin();
+
+// verifica se está logado
+function verificarLogin() {
+  const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+  if (!usuarioLogado || usuarioLogado !== "true") {
+    alert("Você precisa estar logado para acessar esta página.");
+    window.location.href = "../login/login.html";
+  }
+}
+
+// pega usuarioId da URL
+const urlParams = new URLSearchParams(window.location.search);
+const usuarioId = urlParams.get("usuarioId");
+
+if (!usuarioId) {
+  alert("Erro: usuário não identificado. Faça login novamente.");
+  window.location.href = "../login/login.html";
+}
+
 const instituicao       = document.getElementById("instituicao1");
 const btnInst           = document.getElementById("btnInst");
-const btnCadInst        = document.getElementById("btnCadInst");
-const btnexcluirInst    = document.getElementById("btnexcluirInst");
 const btnInicial        = document.getElementById("btnInicial");
+const tbodyInst         = document.getElementById("tbodyInst");
 
-async function salvarInst(){
-    
-    const body = {
-       nome : instituicao.value,
+// carrega instituições filtradas pelo usuário logado
+async function carregarInstituicoes() {
+  try {
+    const response = await fetch(`http://localhost:3000/instituicoes?usuarioId=${usuarioId}`);
+
+    if (!response.ok) {
+      throw new Error("Erro ao buscar instituições");
     }
-    fetch("http://localhost:3000/usuarios", {
-  method: "POST", // tipo da requisição
-  headers: {
-    "Content-Type": "application/json", // informa que o corpo é JSON
-  },
-  body: JSON.stringify(body),
-})
-.then(response => {
-  if (!response.ok) {
-    throw new Error("Erro na requisição: " + response.status);
-  }
-  return response.json(); // converte resposta pra JSON
-})
-.then(data => {
-  console.log("Instituição cadastrada:", data);
-  window.location.href = "login.html";
-})    
-}
 
-function validarSenhas() {
-  let valido = true; // assume que está tudo certo no começo
-  // ======= SENHA =======
-  if (senha.value.trim() === "") {
-    // campo vazio
-    senha.classList.add('is-invalid');
-    document.getElementById('erroSenhaVazia').classList.remove('d-none');
-    document.getElementById('erroSenhaInvalida').classList.add('d-none');
-    valido = false;
-  } else if (!senhaRegex.test(senha.value)) {
-    // não atende ao regex
-    senha.classList.add('is-invalid');
-    document.getElementById('erroSenhaVazia').classList.add('d-none');
-    document.getElementById('erroSenhaInvalida').classList.remove('d-none');
-    valido = false;
-  } else {
-    // senha válida
-    senha.classList.remove('is-invalid');
-    document.getElementById('erroSenhaVazia').classList.add('d-none');
-    document.getElementById('erroSenhaInvalida').classList.add('d-none');
-  }
+    const lista = await response.json();
 
-  // ======= CONFIRMAÇÃO DE SENHA =======
-  if (confSenha.value.trim() === "") {
-    // campo vazio
-    confSenha.classList.add('is-invalid');
-    document.getElementById('erroConfirmacao').classList.remove('d-none');
-    document.getElementById('erroSenhasDiferentes').classList.add('d-none');
-    valido = false;
-  } else if (senha.value !== confSenha.value) {
-    // senhas diferentes
-    confSenha.classList.add('is-invalid');
-    document.getElementById('erroConfirmacao').classList.add('d-none');
-    document.getElementById('erroSenhasDiferentes').classList.remove('d-none');
-    valido = false;
-  } else {
-    // confirmação correta
-    confSenha.classList.remove('is-invalid');
-    document.getElementById('erroConfirmacao').classList.add('d-none');
-    document.getElementById('erroSenhasDiferentes').classList.add('d-none');
-  }
+    tbodyInst.innerHTML = "";
 
-  return valido; // retorna true se tudo estiver correto, false caso contrário
-}
+    lista.forEach(inst => adicionarInstituicaoNaTabela(inst));
 
-function validarCamposBasicos() {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // simples e eficaz
-  const telRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/; // (XX) XXXXX-XXXX ou similar
-
-  // ===== Nome =====
-  if (nome.value.trim() === "") {
-    nome.classList.add('is-invalid');
-    document.getElementById('erroNomeVazio').classList.remove('d-none');
-  } else {
-    nome.classList.remove('is-invalid');
-    document.getElementById('erroNomeVazio').classList.add('d-none');
-  }
-
-  // ===== Sobrenome =====
-if (sobrenome.value.trim() === "") {
-  sobrenome.classList.add('is-invalid');
-  document.getElementById('erroSobrenomeVazio').classList.remove('d-none');
-  valido = false;
-} else {
-  sobrenome.classList.remove('is-invalid');
-  document.getElementById('erroSobrenomeVazio').classList.add('d-none');
-}
-
-  // ===== Email =====
-  if (email.value.trim() === "") {
-    email.classList.add('is-invalid');
-    document.getElementById('erroEmailVazio').classList.remove('d-none');
-    document.getElementById('erroEmailInvalido').classList.add('d-none');
-  } else if (!emailRegex.test(email.value)) {
-    email.classList.add('is-invalid');
-    document.getElementById('erroEmailVazio').classList.add('d-none');
-    document.getElementById('erroEmailInvalido').classList.remove('d-none');
-  } else {
-    email.classList.remove('is-invalid');
-    document.getElementById('erroEmailVazio').classList.add('d-none');
-    document.getElementById('erroEmailInvalido').classList.add('d-none');
-  }
-
-  // ===== Telefone =====
-  if (tel.value.trim() === "") {
-    tel.classList.add('is-invalid');
-    document.getElementById('erroTelefoneVazio').classList.remove('d-none');
-    document.getElementById('erroTelefoneInvalido').classList.add('d-none');
-  } else if (!telRegex.test(tel.value)) {
-    tel.classList.add('is-invalid');
-    document.getElementById('erroTelefoneVazio').classList.add('d-none');
-    document.getElementById('erroTelefoneInvalido').classList.remove('d-none');
-  } else {
-    tel.classList.remove('is-invalid');
-    document.getElementById('erroTelefoneVazio').classList.add('d-none');
-    document.getElementById('erroTelefoneInvalido').classList.add('d-none');
+  } catch (error) {
+    console.error("Erro ao carregar instituições:", error);
   }
 }
 
-btnCadastro.addEventListener("click", (event) => {
-  event.preventDefault(); // impede envio automático
+// cria instituição vinculada ao usuarioId
+async function salvarInst() {
+  const body = {
+    nome: instituicao.value.trim(),
+    usuarioId: usuarioId    // <-- obrigatório para FK
+  };
 
-  // valida todos os campos básicos (nome, sobrenome, email, telefone)
-  validarCamposBasicos();
+  try {
+    const response = await fetch("http://localhost:3000/instituicoes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    });
 
-  // valida senhas e recebe se passou ou não
-  const senhasValidas = validarSenhas();
+    if (!response.ok) {
+      throw new Error("Erro ao cadastrar");
+    }
 
-  // Se tudo válido, salva o usuário
-  if (
-    nome.value.trim() !== "" &&
-    sobrenome.value.trim() !== "" &&
-    emailRegex.test(email.value) &&
-    telRegex.test(tel.value) &&
-    senhasValidas
-  ) {
-    salvarUsuario();
+    const data = await response.json();
+    adicionarInstituicaoNaTabela(data);
+
+    instituicao.value = "";
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// valida input
+function validarCampos() {
+  if (instituicao.value.trim() === "") {
+    instituicao.classList.add("is-invalid");
+    document.getElementById("erroInstVazio").classList.remove("d-none");
+    return false;
+  }
+
+  instituicao.classList.remove("is-invalid");
+  document.getElementById("erroInstVazio").classList.add("d-none");
+  return true;
+}
+
+// adiciona linha na tabela
+function adicionarInstituicaoNaTabela(inst) {
+  const tr = document.createElement("tr");
+
+  tr.innerHTML = `
+    <td>${inst.id}</td>
+    <td>${inst.nome}</td>
+    <td>
+      <button type="button" class="btn btn-sm btn-primary me-2 btnCadastrarCurso" data-id="${inst.id}">
+        Cadastrar Cursos
+      </button>
+      <button type="button" class="btn btn-sm btn-danger btnExcluirInst" data-id="${inst.id}">
+        Excluir
+      </button>
+    </td>
+  `;
+
+  tbodyInst.appendChild(tr);
+}
+
+// ações da tabela
+tbodyInst.addEventListener("click", async (e) => {
+  const btn = e.target;
+
+  if (btn.classList.contains("btnCadastrarCurso")) {
+    const instId = btn.dataset.id;
+    window.location.href = `../curso/cadastroCurso.html?instId=${instId}&usuarioId=${usuarioId}`;
+  }
+
+  if (btn.classList.contains("btnExcluirInst")) {
+    const instId = btn.dataset.id;
+
+    if (!confirm("Deseja realmente excluir esta instituição?")) return;
+
+    try {
+      const response = await fetch(`http://localhost:3000/instituicoes/${instId}`, {
+        method: "DELETE",
+      });
+
+      if (response.status === 409) {
+        alert("Não é possível excluir. Existem cursos vinculados.");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error("Erro ao excluir");
+      }
+
+      btn.closest("tr").remove();
+
+    } catch (error) {
+      console.error(error);
+    }
   }
 });
+
+// eventos dos botões
+btnInst.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  if (validarCampos()) {
+    salvarInst();
+  }
+});
+
+btnInicial.addEventListener("click", () => {
+  window.location.href = `../paginainicial/paginaInicial.html?usuarioId=${usuarioId}`;
+});
+
+// carrega ao abrir
+carregarInstituicoes();

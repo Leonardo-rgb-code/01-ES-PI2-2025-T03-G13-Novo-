@@ -41,11 +41,33 @@ async function login(){
             return;
         }
 })
-.then(data => {
+.then(async data => {
   console.log("Login feito com sucesso", data);
-  localStorage.setItem("usuarioLogado", "true");
-  window.location.href = "../paginaInicial/paginaInicial.html";
-}) 
+
+  try {
+    // Busca se existe instituição cadastrada para esse usuário no backend
+    const respInst = await fetch(`../instituicao/cadastroInstituicao.html?usuarioId=${usuario.id}`);
+
+    if (!respInst.ok) {
+      throw new Error("Erro ao buscar instituições");
+    }
+
+    const instituicoes = await respInst.json();
+
+    // Se existir instituição -> página inicial
+    if (instituicoes.length > 0) {
+      window.location.href = "../paginainicial/paginaInicial.html";
+    } else {
+      // Se não existir -> irá cadastrar a primeira instituição
+      window.location.href = "../instituicao/cadastroInst.html";
+    }
+
+  } catch (erro) {
+    console.error("Erro ao verificar instituições:", erro);
+    // alert("Erro ao verificar instituições do usuário.");
+  }
+})
+
 
 }
 function validarCamposBasicos() {

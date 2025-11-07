@@ -4,12 +4,15 @@ const btnSenha     = document.getElementById("btnSenha");
 
 const senhaRegex   = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
 
+
 async function salvarSenha(){
-    
-    const body = {
-       senha : senha.value
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get("token");
+  const body = {
+       senha : senha.value,
+        token : token
     }
-    fetch("http://localhost:3000/usuarios", {
+    fetch("http://localhost:3000/redefSenha", {
   method: "POST", // tipo da requisição
   headers: {
     "Content-Type": "application/json", // informa que o corpo é JSON
@@ -24,7 +27,7 @@ async function salvarSenha(){
 })
 .then(data => {
   console.log("Senha cadastrada:", data);
-  window.location.href = "login.html";
+  window.location.href = "/front/login/login.html";
 })    
 }
 

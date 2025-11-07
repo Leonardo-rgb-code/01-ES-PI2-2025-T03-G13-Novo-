@@ -24,11 +24,11 @@ router.post("/", async (req: Request, res: Response) => {
 
         if (usuarios.length === 0) {
             // usuário não encontrado
-            res.status(404).send({message:"Usuário não encontrado."})
+            return res.status(404).send({message:"Usuário não encontrado."})
         }
 
         const usuario = usuarios[0];
-        res.send(usuario)
+       return  res.send(usuario)
 
     } catch (err) {
         console.error('Erro no login:', err);

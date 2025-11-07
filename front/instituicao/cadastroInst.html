@@ -21,6 +21,7 @@
       <div class="mb-3">
         <label for="instituicao1" class="form-label">Instituição de Ensino</label>
         <input type="text" class="form-control" id="instituicao1" name="instituicao[]" placeholder="Informe o nome da Instituição" required>
+        <div id="erroInstVazio" class="invalid-feedback d-none">Preencha o nome da Insituição.</div>
       </div>
       <!-- botão adicionar instituição -->
       <div class="mb-4">
@@ -28,40 +29,30 @@
       </div>
       <!-- tabela das instituições cadastradas -->
       <h5 class="mb-3 text-center text-muted">Instituições Cadastradas</h5>
+
       <div class="table-responsive mb-4">
         <table class="table table-striped align-middle text-center">
           <thead class="table-secondary">
             <tr>
+              <th>Código da Instituição</th>
               <th>Nome da Instituição</th>
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Exemplo Instituições Cadastradas-->
-            <tr>
-              <td>Universidade Federal do ABC</td>
-              <td>
-                <button type="button" id="btnCadInst" class="btn btn-sm btn-primary me-2">Cadastrar Cursos</button>
-                <button type="button" id="btnexcluirInst" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Instituto Federal de São Paulo</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Cursos</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="tbodyInst"></tbody>
         </table>
       </div>
-      <!-- botão página inicial centralizado -->
-      <div class="d-flex justify-content-center mt-4">
-        <button type="submit" id="tbnInicial" class="btn btn-outline-secondary">
-          <i class="bi bi-house-door me-1"></i> Página Inicial
-        </button>
-      </div>
     </form>
+
+    <!---- botão página inicial -->
+    <div class="text-center mt-3">
+      <button type="button" id="btnInicial" class="btn btn-outline-secondary">
+        <i class="bi bi-house-door me-1"></i> Página Inicial
+      </button>
+    </div>
   </div>
+
+
+  <script src="cadastroInst.js"></script>
 </body>
 </html>
