@@ -11,3 +11,5 @@ node_modules/
 lib/
 
 .vscode/
+
+back/.env

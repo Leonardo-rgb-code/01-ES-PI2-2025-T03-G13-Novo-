@@ -1,10 +1,13 @@
 import { getConn } from "./db";
 import  { Router, Request, Response } from "express";
-
-const router = Router();
+import dotenv from "dotenv";
 import sgMail from "@sendgrid/mail";
 
-sgMail.setApiKey("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");
+const router = Router();
+
+dotenv.config();
+
+sgMail.setApiKey(process.env.SENDGRID_TOKEN!);
 
 async function sendRecoveryEmail(to: string, token: string) {
   const url = `http://127.0.0.1:5501/front/senha/redefSenha.html?token=${token}`;
