@@ -10,6 +10,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body class="bg-light">
+
+
   <div class="container py-5">
     <form>
       <!-- título da página -->
@@ -23,10 +25,11 @@
       </div>
       <!-- botão adicionar curso -->
       <div class="mb-4">
-        <button type="button" class="btn btn-outline-secondary btn-sm">Adicionar Turma +</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAdicionar">Adicionar Turma +</button>
       </div>
       <!-- tabela dos cursos cadastrados -->
-      <h5 class="mb-3 text-center text-muted">Turmas Cadastradass</h5>
+      
+      <h5 class="mb-3 text-center text-muted">Turmas Cadastradas</h5>
       <div class="table-responsive mb-4">
         <table class="table table-striped align-middle text-center">
           <thead class="table-secondary">
@@ -35,22 +38,9 @@
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody>
-            <!-- Exemplo visual de linha -->
-            <tr>
-              <td>Turma 1</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Alunos</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Turma 2</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Alunos</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
+         
+          <tbody id="tabelaTurmas">
+       
           </tbody>
         </table>
       </div>
@@ -60,8 +50,9 @@
           <i class="bi bi-house-door me-1"></i> Página Inicial
         </button>
       </div>
-
     </form>
   </div>
+
+  <script src="cadastroTurmas.js"></script>
 </body>
 </html>
