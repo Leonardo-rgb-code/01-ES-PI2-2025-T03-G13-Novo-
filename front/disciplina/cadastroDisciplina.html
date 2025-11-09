@@ -54,7 +54,7 @@
       <!-- Botões adicionar -->
       <div class="mb-5">
         <div class="d-flex flex-column align-items-start gap-2">
-          <button type="button" name="botaoDisciplina" class="btn btn-outline-secondary btn-sm">
+          <button type="button" name="botaoDisciplina" td="btnDisci" class="btn btn-outline-secondary btn-sm">
             Adicionar Disciplina +
           </button>
         </div>
@@ -65,37 +65,17 @@
         <table class="table table-striped align-middle text-center">
           <thead class="table-secondary">
             <tr>
+              <th>Código da Disciplina</th>
               <th>Nome da Disciplina</th>
               <th>Ações</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td>Projeto Integrador II</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Turmas</button>
-                <button type="button" class="btn btn-sm btn-primary me-2">Componentes de Notas</button>
-                <!-- Esse botão só ficará disponível se exitirem componentes de nota cadatsrados -->
-                <button type="button" class="btn btn-sm btn-success me-2">Nota Final</button>
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-            <tr>
-              <td>Engenharia e Elicitação de Requisitos</td>
-              <td>
-                <button type="button" class="btn btn-sm btn-primary me-2">Cadastrar Turmas</button>
-                <button type="button" class="btn btn-sm btn-primary me-2">Componentes de Notas</button>
-                <!-- Esse botão só ficará disponível se exitirem componentes de nota cadatsrados -->
-                <button type="button" class="btn btn-sm btn-success me-2">Nota final</button>  
-                <button type="button" class="btn btn-sm btn-danger">Excluir</button>
-              </td>
-            </tr>
-          </tbody>
+          <tbody id="tbodyDisci"></tbody>
         </table>
       </div>
       <!-- Botão Página Inicial -->
       <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-outline-secondary">
+        <button type="button" class="btn btn-outline-secondary">
           <i class="bi bi-house-door me-2"></i> Página Inicial
         </button>
       </div>
@@ -103,5 +83,5 @@
   </div>
 </body>
 </html>
-
+ 
 <script src="cadastroDisciplina.js"></script>

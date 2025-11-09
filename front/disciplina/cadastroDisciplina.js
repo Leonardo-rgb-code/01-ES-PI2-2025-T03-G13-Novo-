@@ -1,123 +1,157 @@
-// Lista de disciplinas
-let disciplinas = [
-    {
-        nome: "Projeto Integrador II",
-        sigla: "PI2",
-        codigo: "ENG001",
-        periodo: "1º Semestre"
-    },
-    {
-        nome: "Engenharia e Elicitação de Requisitos",
-        sigla: "EER",
-        codigo: "ENG002",
-        periodo: "2º Semestre"
-    }
-];
+// verificarLogin();
 
-// Botão de adicionar disciplina
-let botaoAdicionar = document.querySelector('.btn-outline-secondary.btn-sm');
-botaoAdicionar.onclick = function() {
-    // Pegar os valores dos campos
-    let nome = document.getElementById('disciplina1').value;
-    let sigla = document.getElementById('siglaDisci').value;
-    let codigo = document.getElementById('codigoDisci1').value;
-    
-    // Pegar qual período foi selecionado
-    let periodo = "";
-    if (document.getElementById('periodo1').checked) {
-        periodo = "1º Semestre";
-    } else if (document.getElementById('periodo2').checked) {
-        periodo = "2º Semestre";
-    }
-    
-    // Verificar se preencheu tudo
-    if (nome == "" || sigla == "" || codigo == "" || periodo == "") {
-        alert("Preencha todos os campos!");
-        return;
-    }
-    
-    // Criar nova disciplina
-    let novaDisciplina = {
-        nome: nome,
-        sigla: sigla,
-        codigo: codigo,
-        periodo: periodo
-    };
-    
-    // Adicionar na lista
-    disciplinas.push(novaDisciplina);
-    
-    // Mostrar na tabela
-    mostrarDisciplinas();
-    
-    // Limpar os campos
-    document.getElementById('disciplina1').value = "";
-    document.getElementById('siglaDisci').value = "";
-    document.getElementById('codigoDisci1').value = "";
-    document.getElementById('periodo1').checked = false;
-    document.getElementById('periodo2').checked = false;
-    
-    alert("Disciplina adicionada!");
-};
+// // verifica se está logado
+// function verificarLogin() {
+//   const usuarioLogado = localStorage.getItem("usuarioLogado");
+//     if (usuarioLogado != "true") {
+//     alert("Usuário não identificado. Faça login novamente.");
+//     window.location.href = "../login/login.html";
+//   }
+// }
 
-// Função para mostrar as disciplinas na tabela
-function mostrarDisciplinas() {
-    let tbody = document.querySelector('tbody');
-    tbody.innerHTML = "";
-    
-    for (let i = 0; i < disciplinas.length; i++) {
-        tbody.innerHTML += `
-            <tr>
-                <td>${disciplinas[i].nome}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary me-2" onclick="alert('Cadastrar turmas...')">
-                        Cadastrar Turmas
-                    </button>
-                    <button class="btn btn-sm btn-primary me-2" onclick="alert('Componentes de notas...')">
-                        Componentes de Notas
-                    </button>
-                    <button class="btn btn-sm btn-success me-2" onclick="alert('Nota final...')">
-                        Nota Final
-                    </button>
-                    <button class="btn btn-sm btn-danger" onclick="excluirDisciplina(${i})">
-                        Excluir
-                    </button>
-                </td>
-            </tr>
-        `;
-    }
-}
+// // pega instituiçãoId da URL
+// const urlParams = new URLSearchParams(window.location.search);
+// const usuarioId = localStorage.getItem("id");
 
-// Função para excluir disciplina
-function excluirDisciplina(posicao) {
-    if (confirm("Quer mesmo excluir esta disciplina?")) {
-        disciplinas.splice(posicao, 1);
-        mostrarDisciplinas();
-        alert("Disciplina excluída!");
-    }
-}
+// if (!usuarioId) {
+//   alert("Erro: usuário não identificado. Faça login novamente.");
+//   window.location.href = "../login/login.html";
+// }
 
-// Botão de voltar para página inicial
-document.querySelector('button[type="submit"]').onclick = function(e) {
-    e.preventDefault();
-    window.location.href = 'index.html';
-};
+// const disciplina       = document.getElementById("disciplina1");
+// const btnDisci           = document.getElementById("btnDisci");
+// const btnInicial        = document.getElementById("btnInicial");
+// const tbodyDisci         = document.getElementById("tbodyDisci");
 
-// Mostrar as disciplinas quando carregar a página
-mostrarDisciplinas();
+// // carrega instituições filtradas pelo usuário logado
+// async function carregarDisciplinas() {
+//   try {
+//     const response = await fetch(`http://localhost:3000/instituicoes?usuarioId=${usuarioId}`);
 
-// Colocar o nome do curso no título (se vier da página anterior)
-let cursoSelecionado = localStorage.getItem('cursoSelecionado');
-if (cursoSelecionado) {
-    document.getElementById('nomeCursoTitulo').textContent = cursoSelecionado;
-} else {
-    document.getElementById('nomeCursoTitulo').textContent = "Engenharia de Computação";
-}
+//     if (!response.ok) {
+//       throw new Error("Erro ao buscar disciplinas");
+//     }
 
-const usuario = localStorage.getItem("usuarioLogado");
-console.log(usuario)
+//     const lista = await response.json();
 
-if (!usuario) {
-  // usuário não está logado → redireciona para login
-  window.location.href = "../login/login.html";
-}
+//     tbodyDisci.innerHTML = "";
+
+//     lista.forEach(inst => adicionarDisciplinaNaTabela(disci));
+
+//   } catch (error) {
+//     console.error("Erro ao carregar disciplinas:", error);
+//   }
+// }
+
+// // cria instituição vinculada ao usuarioId
+// async function salvarInst() {
+//   const body = {
+//     nome: instituicao.value.trim(),
+//     usuarioId: usuarioId    // <-- obrigatório para FK
+//   };
+
+//   try {
+//     const response = await fetch("http://localhost:3000/instituicoes", {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify(body)
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Erro ao cadastrar");
+//     }
+
+//     const data = await response.json();
+//     adicionarInstituicaoNaTabela(data);
+
+//     instituicao.value = "";
+
+//   } catch (error) {
+//     console.error(error);
+//   }
+// }
+
+// // valida input
+// function validarCampos() {
+//   if (instituicao.value.trim() === "") {
+//     instituicao.classList.add("is-invalid");
+//     document.getElementById("erroInstVazio").classList.remove("d-none");
+//     return false;
+//   }
+
+//   instituicao.classList.remove("is-invalid");
+//   document.getElementById("erroInstVazio").classList.add("d-none");
+//   return true;
+// }
+
+// // adiciona linha na tabela
+// function adicionarInstituicaoNaTabela(inst) {
+//   const tr = document.createElement("tr");
+
+//   tr.innerHTML = `
+//     <td>${inst.id}</td>
+//     <td>${inst.nome}</td>
+//     <td>
+//       <button type="button" class="btn btn-sm btn-primary me-2 btnCadastrarCurso" data-id="${inst.id}">
+//         Cadastrar Cursos
+//       </button>
+//       <button type="button" class="btn btn-sm btn-danger btnExcluirInst" data-id="${inst.id}">
+//         Excluir
+//       </button>
+//     </td>
+//   `;
+
+//   tbodyInst.appendChild(tr);
+// }
+
+// // ações da tabela
+// tbodyInst.addEventListener("click", async (e) => {
+//   const btn = e.target;
+
+//   if (btn.classList.contains("btnCadastrarCurso")) {
+//     const instId = btn.dataset.id;
+//     window.location.href = `../curso/cadastroCurso.html?instId=${instId}&usuarioId=${usuarioId}`;
+//   }
+
+//   if (btn.classList.contains("btnExcluirInst")) {
+//     const instId = btn.dataset.id;
+
+//     if (!confirm("Deseja realmente excluir esta instituição?")) return;
+
+//     try {
+//       const response = await fetch(`http://localhost:3000/instituicoes/${instId}`, {
+//         method: "DELETE",
+//       });
+
+//       if (response.status === 409) {
+//         alert("Não é possível excluir. Existem cursos vinculados.");
+//         return;
+//       }
+
+//       if (!response.ok) {
+//         throw new Error("Erro ao excluir");
+//       }
+
+//       btn.closest("tr").remove();
+
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   }
+// });
+
+// // eventos dos botões
+// btnInst.addEventListener("click", (event) => {
+//   event.preventDefault();
+
+//   if (validarCampos()) {
+//     salvarInst();
+//   }
+// });
+
+// btnInicial.addEventListener("click", () => {
+//   window.location.href = `../paginainicial/paginaInicial.html?usuarioId=${usuarioId}`;
+// });
+
+// // carrega ao abrir
+// carregarInstituicoes();

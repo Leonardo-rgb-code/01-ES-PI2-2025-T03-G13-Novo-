@@ -8,6 +8,8 @@ const confSenha    = document.getElementById("confirmSenha");
 const btnCadastro  = document.getElementById("botaoCadastro");
 
 const senhaRegex   = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const telRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/; // (XX) XXXXX-XXXX ou similar
 
 async function salvarUsuario(){
     
@@ -33,7 +35,7 @@ async function salvarUsuario(){
 })
 .then(data => {
   console.log("Usuário cadastrado:", data);
-  window.location.href = "login.html";
+  window.location.href = "/front/login/login.html";
 })    
 }
 
@@ -82,9 +84,7 @@ function validarSenhas() {
   return valido; // retorna true se tudo estiver correto, false caso contrário
 }
 
-function validarCamposBasicos() {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;  // simples e eficaz
-  const telRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/; // (XX) XXXXX-XXXX ou similar
+function validarCamposBasicos() {  // simples e eficaz
 
   // ===== Nome =====
   if (nome.value.trim() === "") {
