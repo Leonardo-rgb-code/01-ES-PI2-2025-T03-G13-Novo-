@@ -46,7 +46,7 @@ async function login(){
   console.log("Login feito com sucesso", data);
   localStorage.setItem('usuarioLogado', 'true');
   localStorage.setItem('id', data['id']);
-  localStorage.setItem('nome', data['nome']);
+  localStorage.setItem('nome', primeiraLetraMaiuscula(data['nome']));
 
   try {
     // Busca se existe instituição cadastrada para esse usuário no backend
@@ -76,8 +76,10 @@ async function login(){
     // alert("Erro ao verificar instituições do usuário.");
   }
 })
+}
 
-
+function primeiraLetraMaiuscula(texto) {
+  return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
 function validarCamposBasicos() {
   // ===== email =====
