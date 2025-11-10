@@ -156,4 +156,3 @@ btnInicial.addEventListener("click", () => {
 
 // carrega ao abrir
 carregarInstituicoes();
->>>>>>> Stashed changes
