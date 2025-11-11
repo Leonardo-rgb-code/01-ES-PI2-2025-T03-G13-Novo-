@@ -44,5 +44,38 @@
       </div>
     </form>
   </div>
+     <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('form');
+      
+      form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const radioButtons = document.getElementsByName('media');
+        let mediaSelecionada = null;
+        
+        for (let i = 0; i < radioButtons.length; i++) {
+          if (radioButtons[i].checked) {
+            mediaSelecionada = radioButtons[i].value;
+            break;
+          }
+        }
+        
+        if (!mediaSelecionada) {
+          alert('Por favor, selecione o tipo de média desejada.');
+          return;
+        }
+        
+        console.log('Tipo de média selecionada:', mediaSelecionada);
+        alert('Fórmula cadastrada com sucesso! Tipo: ' + 
+              (mediaSelecionada === 'media7' ? 'Média Ponderada' : 'Média Aritmética'));
+      });
+      
+      const nomeCursoTitulo = document.getElementById('nomeCursoTitulo');
+      if (nomeCursoTitulo) {
+        nomeCursoTitulo.textContent = 'Matemática Aplicada';
+      }
+    });
+  </script>
 </body>
 </html>
