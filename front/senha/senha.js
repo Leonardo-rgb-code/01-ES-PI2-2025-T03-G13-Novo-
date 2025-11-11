@@ -1,6 +1,7 @@
 
 const email     = document.getElementById("email");
 const btnEmail  = document.getElementById("btnEmail");
+const btnReenviarSenha  = document.getElementById("reenviar-senha");
 
 async function linkRecSenha(){                                                       
     const body = {
@@ -50,6 +51,16 @@ function validarCamposBasicos() {
 
 
 btnEmail.addEventListener("click", (event) => {
+  event.preventDefault(); // impede envio automático
+  // Se tudo válido, salva o usuário
+  if (
+    email.value.trim() !== "" 
+  ) {
+    linkRecSenha();
+  }
+});
+
+btnReenviarSenha.addEventListener("click", (event) => {
   event.preventDefault(); // impede envio automático
   // Se tudo válido, salva o usuário
   if (
