@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-// =========================
 // VERIFICA LOGIN
-// =========================
 verificarLogin();
 
 function verificarLogin() {
@@ -17,9 +15,7 @@ function verificarLogin() {
   document.getElementById("nomeUsuarioTitulo").textContent = nomeUsuario || "Professor";
 }
 
-// =========================
 // BOTÕES E LINKS
-// =========================
 const usuarioId = localStorage.getItem("id");
 
 // botão de instituições
@@ -38,12 +34,10 @@ btnLancarNotas.addEventListener("click", () => {
 // botão de média final
 const btnMediaFinal = document.querySelector(".bi-calculator").closest(".card").querySelector("button");
 btnMediaFinal.addEventListener("click", () => {
-  window.location.href = `/front/mediaFinal/mediaFinal.html?usuarioId=${usuarioId}`;
+  window.location.href = `/front/mediaTurmas/mediaTurmas.html?usuarioId=${usuarioId}`;
 });
 
-// =========================
 // LOGOUT
-// =========================
 document.getElementById("btnLogout").addEventListener("click", () => {
   localStorage.removeItem("usuarioLogado");
   localStorage.removeItem("id");

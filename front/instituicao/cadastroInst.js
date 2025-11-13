@@ -98,7 +98,6 @@ async function carregarInstituicoes() {
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${id}</td>
       <td>${nome}</td>
       <td>
         <button type="button" class="btn btn-sm btn-primary me-2 btnCadastrarCurso" data-id="${id}">
