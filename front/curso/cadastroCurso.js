@@ -113,19 +113,18 @@ async function preencheTituloInstituicao() {
   function adicionarCursoNaTabela(curso) {
 
     // Usa o ID correto conforme retorno do backend
-    const id = curso.id_curso ?? curso.id ?? inst.cursoId;
+    const id = curso.id_curso ?? curso.id ?? curso.cursoId ?? curso.id_interno ?? null;
     const nome = curso.nome_curso ?? curso.nome;
 
     const tr = document.createElement("tr");
 
     tr.innerHTML = `
-      <td>${id}</td>
       <td>${nome}</td>
       <td>
         <button type="button" class="btn btn-sm btn-primary me-2 btnCadastrarDisciplina" data-id="${id}">
           Cadastrar Disciplinas
         </button>
-        <button type="button" class="btn btn-sm btn-danger btnExcluiCurso" data-id="${id}">
+        <button type="button" class="btn btn-sm btn-danger btnExcluirCurso" data-id="${id}">
           Excluir
         </button>
       </td>
@@ -152,8 +151,8 @@ async function preencheTituloInstituicao() {
       return;
     }
 
-    if (btn.classList.contains("btnExcluiCurso")) {
-      if (!confirm("Deseja realmente excluir esta curso?")) return;
+    if (btn.classList.contains("btnExcluirCurso")) {
+      if (!confirm("Deseja realmente excluir este Curso?")) return;
 
       try {
         const response = await fetch(`http://localhost:3000/cursos/${cursoId}`, {
