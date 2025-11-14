@@ -1,7 +1,8 @@
--- BANCO DE DADOS COMPLETO: SISTEMA NOTA DEZ
-CREATE TABLE turmas (
-	id_turma INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
+CREATE TABLE componentes_notas(
+	id_componente INT AUTO_INCREMENT PRIMARY KEY,
+	nome VARCHAR(100) NOT NULL,
+	sigla VARCHAR(100) NOT NULL,
+	peso INT NULL,
 	id_usuario INT,
     id_disciplina INT,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
