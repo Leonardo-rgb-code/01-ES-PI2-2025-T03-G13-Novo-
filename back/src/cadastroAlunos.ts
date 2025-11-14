@@ -4,15 +4,15 @@ import { Router, Request, Response } from "express";
 const router = Router();
 
 /**
- * GET /turmas
+ * GET /Alunos
  */
 router.get("/", async (req: Request, res: Response) => {
   const usuarioId = req.query.usuarioId;
-  const disciplinaId = req.query.disciplinaId;
+  const turmaId = req.query.trumaId;
   const db = await getConn();
 
   try {
-    let sql = "SELECT * FROM turmas";
+    let sql = "SELECT * FROM alunos";
     let params: any[] = [];
 
     if (usuarioId) {
@@ -20,22 +20,22 @@ router.get("/", async (req: Request, res: Response) => {
       params.push(usuarioId);
     }
 
-    if (disciplinaId) {
-      sql += " AND id_dsiciplina = ?";
-      params.push(disciplinaId);
+    if (turmaId) {
+      sql += " AND id_truma = ?";
+      params.push(turmaId);
     }
 
     const [rows] = await db.execute(sql, params);
     return res.json(rows);
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao buscar turmas", error });
+    return res.status(500).json({ message: "Erro ao buscar Alunos", error });
   } finally {
     db.release();
   }
 });
 
 /**
- * GET /turma/:id
+ * GET /aluno/:id
  */
 router.get("/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -46,50 +46,51 @@ router.get("/:id", async (req: Request, res: Response) => {
   const db = await getConn();
   try {
     const [rows]: any = await db.execute(
-      "SELECT * FROM turmas WHERE id = ?",
+      "SELECT * FROM alunos WHERE matricula = ?",
       [id]
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: "Turma não encontrada" });
+      return res.status(404).json({ message: "Aluno não encontrado" });
     }
 
     return res.json(rows[0]);
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao buscar turma", error });
+    return res.status(500).json({ message: "Erro ao buscar aluno", error });
   } finally {
     db.release();
   }
 });
 
 /**
- * POST /turma
+ * POST /Aluno
  */
 router.post("/", async (req: Request, res: Response) => {
-  const { nome, usuarioId, disciplinaId } = req.body;
+  const { matricula, nome, usuarioId, turmaId } = req.body;
 
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
-      "INSERT INTO turmas (nome, id_usuario, id_disciplina) VALUES (?, ?, ?)",
-      [nome, usuarioId, disciplinaId]
+      "INSERT INTO alunos (matricula, nome, id_usuario, id_turma) VALUES (?, ?, ?, ?)",
+      [matricula, nome, usuarioId, turmaId]
     );
 
-    return res.status(201).json({
-      id: result.insertId,
+    return res.status(201).json({ //to mandando pro frontend a resposta
+      id: result.insertId, //o id foi preenchido
       nome,
       usuarioId,
-      disciplinaId
+      turmaId
     });
+
   } catch (error) {
-    return res.status(500).json({ message: "Erro ao cadastrar turma", error });
+    return res.status(500).json({ message: "Erro ao cadastrar aluno", error });
   } finally {
     db.release();
   }
 });
 
 /**
- * DELETE /turma/:id
+ * DELETE /aluno/:id
  */
 router.delete("/:id", async (req: Request, res: Response) => {
   const id = Number(req.params.id);
@@ -100,15 +101,15 @@ router.delete("/:id", async (req: Request, res: Response) => {
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
-      "DELETE FROM turmas WHERE id_turma = ?",
+      "DELETE FROM alunos WHERE matricula = ?",
       [id]
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Turma não encontrada" });
+      return res.status(404).json({ message: "Aluno não encontrado" });
     }
 
-    return res.json({ message: "Turma excluída com sucesso" });
+    return res.json({ message: "Aluno excluído com sucesso" });
   } catch (error: any) {
     if (error.errno === 1451) {
       return res.status(409).json({
@@ -116,7 +117,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
       });
     }
 
-    return res.status(500).json({ message: "Erro ao excluir turma", error });
+    return res.status(500).json({ message: "Erro ao excluir aluno", error });
   } finally {
     db.release();
   }

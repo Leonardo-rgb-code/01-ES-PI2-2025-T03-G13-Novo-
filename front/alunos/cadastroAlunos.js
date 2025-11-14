@@ -176,19 +176,35 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Ao selecionar arquivo
-  inputCSV.addEventListener("change", function () {
-    const arquivo = this.files[0];
-    if (!arquivo) return;
+inputCSV.addEventListener("change", function () {
+  const arquivo = this.files[0];
+  if (!arquivo) return;
 
-    const leitor = new FileReader();
+  // Verificar extensão correta se é um .csv
+  const nomeArquivo = arquivo.name.toLowerCase();
+  if (!nomeArquivo.endsWith(".csv")) {
+    alert("Formato inválido! O arquivo deve ser .csv");
+    inputCSV.value = ""; // limpa o campo
+    return;
+  }
 
-    leitor.onload = function (evento) {
-      const conteudo = evento.target.result;
-      processarCSV(conteudo);
-    };
+  const leitor = new FileReader();
 
-    leitor.readAsText(arquivo, "UTF-8");
-  });
+  leitor.onload = function (evento) {
+    const conteudo = evento.target.result;
+
+    // valida se realmente parece CSV, com informações dividas por vírgula
+    if (!conteudo.includes(",") && !conteudo.includes(";")) {
+      alert("Arquivo inválido! O CSV deve conter separação por vírgulas.");
+      inputCSV.value = "";
+      return;
+    }
+
+    processarCSV(conteudo);
+  };
+
+  leitor.readAsText(arquivo, "UTF-8");
+});
 
   // Processamento CSV
   function processarCSV(texto) {

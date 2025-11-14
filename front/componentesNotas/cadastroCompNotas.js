@@ -12,11 +12,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // if (!usuarioId) { ... }
   // verificarLogin();
 
-  // ------ VARIÁVEIS PRINCIPAIS ------
+  // variáveis
   let componentes = [];
   let componentesSalvos = false;
 
-  // inputs / elementos
+  // elementos
   const componenteNomeNota = document.getElementById("componenteNota");
   const siglaCompoNota = document.getElementById("siglaCompNota");
   const descricaodaNota = document.getElementById("descricaoNota");
@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnSalvar = document.getElementById("btnSalvarComponentes");
   const btnPaginaInicial = document.getElementById("btnPaginaInicial");
 
-  // util: get selected media type
   function getTipoMediaSelecionada() {
     return [...tipoMediaRadios].find(r => r.checked)?.value ?? null;
   }
@@ -54,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("erroPesoTotal").classList.add("d-none");
   });
 
-  // ------ BLOQUEAR TROCA DE TIPO DE MÉDIA SE JÁ EXISTIREM COMPONENTES ------
+  // Bloqueia a troca de tipos de médias se ja tiver componente cadastrado
   [...tipoMediaRadios].forEach(radio => {
     radio.addEventListener("change", () => {
       // se já existem componentes, não permite trocar o tipo
@@ -81,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ----- validação de campos (exibe mensagens) -----
+  // Validação
   function validarCampos() {
     let valido = true;
 
@@ -150,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return valido;
   }
 
-  // ----- ADICIONAR COMPONENTE -----
+  // Adiciona o componente
   btnAdicionar.addEventListener("click", () => {
     // chama validarCampos para exibir mensagens
     if (!validarCampos()) return;
@@ -160,9 +159,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const sigla = siglaCompoNota.value.trim();
     const desc = descricaodaNota.value.trim();
     const pesoInput = document.getElementById("pesoNota");
-    const peso = (!campoPeso.classList.contains("d-none")) ? Number(pesoInput.value.trim()) : null;
+    let peso = null;
 
-    // push e render
+    if (!campoPeso.classList.contains("d-none")) {
+      const valor = pesoInput.value.trim();
+      peso = valor === "" ? null : Number(valor);
+    }
+
     componentes.push({ nome, sigla, desc, peso: peso === null ? null : peso });
     componentesSalvos = false;
     atualizarTabela();
@@ -181,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ----- ATUALIZAR TABELA -----
+  // Atualiza Tabela
   function atualizarTabela() {
     tabela.innerHTML = "";
 
@@ -201,7 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
       tabela.appendChild(tr);
     });
 
-    // attach event listeners for remove buttons
     tabela.querySelectorAll(".btn-remover").forEach(btn => {
       btn.addEventListener("click", (e) => {
         const idx = Number(btn.dataset.index);
@@ -210,21 +212,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // simple HTML escaper
   function escapeHtml(str) {
     return str.replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
   }
 
-  // ----- REMOVER COMPONENTE -----
+  // Remove componente
   function remover(i) {
     componentes.splice(i, 1);
     componentesSalvos = false;
     atualizarTabela();
   }
-  // expose to window if needed
+
   window.remover = remover;
 
-  // ----- BOTÃO SALVAR NO BANCO -----
+  // Botão para salvar no banco de dados
   btnSalvar.addEventListener("click", async () => {
     if (componentes.length === 0) {
       alert("Adicione ao menos um componente antes de salvar.");
@@ -251,25 +252,43 @@ document.addEventListener("DOMContentLoaded", () => {
     // ----- AQUI VAI A REQUISIÇÃO PARA O BACKEND -----
     // Substitua a URL e payload conforme sua API.
     // Exemplo (descomente e ajuste conforme necessário):
-    /*
-    try {
-      const response = await fetch('http://localhost:3000/componentes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tipoMedia, componentes })
-      });
-      if (!response.ok) throw new Error('Erro ao salvar');
-    } catch (err) {
-      alert('Erro ao salvar componentes no servidor.');
+    btnSalvar.addEventListener("click", async () => {
+    if (componentes.length === 0) {
+      alert("Adicione ao menos um componente antes de salvar.");
       return;
     }
-    */
+    const usuarioId = localStorage.getItem("id");
+    const disciplinaId = localStorage.getItem("disciplinaId");
+
+    try {
+      for (const c of componentes) {
+        await fetch("http://localhost:3000/componentesNotas", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome: c.nome,
+            sigla: c.sigla,
+            peso: c.peso,    // aceita null ou número
+            usuarioId,
+            disciplinaId
+          })
+        });
+      }
+
+      alert("Componentes salvos com sucesso!");
+      componentesSalvos = true;
+
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao salvar no servidor.");
+    }
+  });
 
     componentesSalvos = true;
     alert("Componentes salvos com sucesso!");
   });
 
-  // ----- BOTÃO PÁGINA INICIAL (confirmação se não salvo) -----
+  // Págins inicial (confirmação se não salvo) -----
   btnPaginaInicial.addEventListener("click", (e) => {
     if (!componentesSalvos && componentes.length > 0) {
       const sair = confirm("Você ainda não salvou os componentes. Deseja sair e perder os dados?");
@@ -277,9 +296,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     window.location.href = "../paginainicial/paginaInicial.html";
   });
-
-  // optional: set discipline title (if you pass via query param or localStorage)
-  // exemplo: document.getElementById('nomeDisciplinaTitulo').textContent = 'Matemática';
 
   // inicializa: (esconde campo peso por padrão)
   campoPeso.classList.add("d-none");

@@ -22,10 +22,11 @@
       <div class="mb-3">
         <label for="turma" class="form-label">Nome da Turma</label>
         <input type="text" class="form-control" id="turma" name="turma[]" placeholder="Informe o nome da Turma" required>
+        <div id="erroTurmaVazio" class="invalid-feedback d-none">Informe a Turma.</div>
       </div>
       <!-- botão adicionar curso -->
       <div class="mb-4">
-        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnAdicionar">Adicionar Turma +</button>
+        <button type="button" class="btn btn-outline-secondary btn-sm" id="btnTurma">Adicionar Turma +</button>
       </div>
       <!-- tabela dos cursos cadastrados -->
       
@@ -46,7 +47,7 @@
       </div>
       <!-- botão página inicial -->
       <div class="d-flex justify-content-center mt-4">
-        <button type="submit" class="btn btn-outline-secondary">
+        <button type="submit" id="btnInicial" class="btn btn-outline-secondary">
           <i class="bi bi-house-door me-1"></i> Página Inicial
         </button>
       </div>
