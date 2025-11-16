@@ -1,3 +1,5 @@
+<!-- Autor: Gabrielle Mota -->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -13,12 +15,10 @@
   <div class="container py-5">
     <form>
       <h2 class="text-center mb-4">Disciplinas</h2>
-      <h5 class="text-center mb-4 text-muted">
-        Cadastre ou Edite suas Disciplinas do Curso:
-        <strong id="nomeCursoTitulo"></strong>
+      <h5 class="text-center mb-4 text-muted"> <!--Cria o id para adicionar o nome do Curso na página-->
+        Cadastre ou Edite suas Disciplinas do Curso:<strong id="nomeCursoTitulo"></strong>
       </h5>
       <h5 class="text-center mb-4 text-muted">Favor preencher todos os campos</h5>
-
       <!-- Campos de disciplina -->
       <div class="row g-3 mb-4">
         <div class="col-md-6">
@@ -32,14 +32,13 @@
           <div id="errosiglaDisciVazio" class="invalid-feedback d-none">Preencha a Sigla da Disciplina.</div>
         </div>
       </div>
-
       <div class="row g-3 mb-5">
         <div class="col-md-6">
           <label for="codigoDisci1" class="form-label">Código da Disciplina</label>
           <input type="text" class="form-control" id="codigoDisci1" name="codigoDisci[]" placeholder="Informe o Código da Disciplina" required>
           <div id="erroCodigoDisciVazio" class="invalid-feedback d-none">Preencha o código da Disciplina.</div>
         </div>
-
+        <!--Criação do radio para seleção de opção do período e atribuição de valor para identificação depois da opção selecionada-->
         <div class="col-md-6">
           <p class="mb-1">Período:</p>
           <div class="d-flex align-items-center gap-3">
@@ -56,7 +55,6 @@
           <div id="erroPeriodoVazio" class="text-danger d-none">Selecione um período.</div>
         </div>
       </div>
-
       <!-- Botões adicionar -->
       <div class="mb-5">
         <div class="d-flex flex-column align-items-start gap-2">
@@ -65,7 +63,6 @@
           </button>
         </div>
       </div>
-
       <!-- Tabela -->
       <h5 class="mb-3 text-center text-muted">Disciplinas Cadastradas</h5>
       <div class="table-responsive mb-4">
@@ -79,7 +76,6 @@
           <tbody id="tbodyDisci"></tbody>
         </table>
       </div>
-
       <!-- Botão Página Inicial -->
       <div class="d-flex justify-content-center mt-4">
         <button type="button" id="btnInicial" class="btn btn-outline-secondary">

@@ -1,9 +1,11 @@
+// <!-- Autor: Gabrielle Mota -->
 
 const email       = document.getElementById("emailInput");
 const senha       = document.getElementById("senhaInput");
 const btnLogin    = document.getElementById("btnLogin");
 const alertLogin  = document.getElementById("alertLogin"); // alerta acima do título
 
+//pega as informações do back para comparar e efetuar ou não o login
 async function login(){                                                       
     const body = {
        email : email.value,
@@ -15,11 +17,11 @@ async function login(){
     document.getElementById('erroSenhaInvalido').classList.add('d-none')
 
   fetch("http://localhost:3000/login", {
-  method: "POST", // tipo da requisição
+  method: "POST", // tipo da requisição no backend
   headers: {
     "Content-Type": "application/json", // informa que o corpo é JSON
   },
-  body: JSON.stringify(body),
+  body: JSON.stringify(body), //pega as informações do body que foi criada la atrás
 })
 .then(response => {
         if (!response.ok) {
@@ -43,6 +45,7 @@ async function login(){
         return response.json()
 })
 .then(async data => {
+  //salva as informações do usuário no localStorage (armazenamento interno do navegador)
   console.log("Login feito com sucesso", data);
   localStorage.setItem('usuarioLogado', 'true');
   localStorage.setItem('id', data['id']);
@@ -65,7 +68,7 @@ async function login(){
     if (instituicoes.length > 0) {
       window.location.href = "/front/paginainicial/paginaInicial.html";
     } else {
-      // Se não existir -> irá cadastrar a primeira instituição
+      // Se não existir -> irá cadastrar a primeira instituição, não vai para página inicial
       window.location.href = "/front/instituicao/cadastroInst.html";
     }
     })
@@ -82,7 +85,7 @@ function primeiraLetraMaiuscula(texto) {
   return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
 function validarCamposBasicos() {
-  // ===== email =====
+  // email 
   if (email.value.trim() === "") {
     email.classList.add('is-invalid');
     document.getElementById('erroEmailVazio').classList.remove('d-none');
@@ -91,7 +94,7 @@ function validarCamposBasicos() {
     document.getElementById('erroEmailVazio').classList.add('d-none');
   }
 
-    // ===== Ssenha =====
+    // Senha
   if (senha.value.trim() === "") {
     senha.classList.add('is-invalid');
     document.getElementById('erroSenhaVazia').classList.remove('d-none');

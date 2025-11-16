@@ -1,5 +1,7 @@
+// <!-- Autor: Gabrielle Mota -->
+
 document.addEventListener("DOMContentLoaded", async() => {
-// VERIFICA LOGIN
+// Verifica o login pelo id do usuário e nome salvos no localstorage
 verificarLogin();
 
 function verificarLogin() {
@@ -7,15 +9,15 @@ function verificarLogin() {
   const usuarioId = localStorage.getItem("id");
   const nomeUsuario = localStorage.getItem("nome");
 
-  if (usuarioLogado !== "true" || !usuarioId) {
+  if (usuarioLogado !== "true" || !usuarioId) { //se usuário logado for diferente de True, direciona para a tela de login
     window.location.href = "/front/login/login.html";
   }
 
-  // mostra o nome do usuário no topo
+  // mostra o nome do usuário no cabeçalho pelo id criado na navbar
   document.getElementById("nomeUsuarioTitulo").textContent = nomeUsuario || "Professor";
 }
 
-// BOTÕES E LINKS
+// Botões e links
 const usuarioId = localStorage.getItem("id");
 
 // botão de instituições
@@ -31,7 +33,7 @@ btnLancarNotas.addEventListener("click", () => {
   window.location.href = `/front/notaFinal/NotaFinal.html?usuarioId=${usuarioId}`;
 });
 
-// LOGOUT
+// LOGOUT / sair, remove as informações do usuário do localStorage
 document.getElementById("btnLogout").addEventListener("click", () => {
   localStorage.removeItem("usuarioLogado");
   localStorage.removeItem("id");
@@ -40,6 +42,7 @@ document.getElementById("btnLogout").addEventListener("click", () => {
   window.location.href = "/front/login/login.html";
 });
 
+//Verifica se o usuário tem algum curso cadastrado, se não tiver direciona para a tela de cadastro instituição
 async function carregarCursos() {
   const res = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}`);
   const lista = await res.json();

@@ -1,3 +1,4 @@
+// <!-- Autor: Gabrielle Mota, Matheus Ferreira -->
 
 const nome         = document.getElementById("nome");
 const sobrenome    = document.getElementById("sobrenome");
@@ -7,12 +8,13 @@ const senha        = document.getElementById("senha");
 const confSenha    = document.getElementById("confirmSenha");
 const btnCadastro  = document.getElementById("botaoCadastro");
 
+// Criação das regex para o fromato de email e telefone e para as regras da criação de senha
 const senhaRegex   = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const telRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/; // (XX) XXXXX-XXXX ou similar
 
 async function salvarUsuario(){
-    
+    // criação do body que vai enviar na solicitação do back
     const body = {
        nome : nome.value,
        sobrenome : sobrenome.value,
@@ -41,7 +43,7 @@ async function salvarUsuario(){
 
 function validarSenhas() {
   let valido = true; // assume que está tudo certo no começo
-  // ======= SENHA =======
+  // Senha
   if (senha.value.trim() === "") {
     // campo vazio
     senha.classList.add('is-invalid');
@@ -61,7 +63,7 @@ function validarSenhas() {
     document.getElementById('erroSenhaInvalida').classList.add('d-none');
   }
 
-  // ======= CONFIRMAÇÃO DE SENHA =======
+  // Confirmação de senha
   if (confSenha.value.trim() === "") {
     // campo vazio
     confSenha.classList.add('is-invalid');
@@ -84,9 +86,9 @@ function validarSenhas() {
   return valido; // retorna true se tudo estiver correto, false caso contrário
 }
 
-function validarCamposBasicos() {  // simples e eficaz
+function validarCamposBasicos() { 
 
-  // ===== Nome =====
+  // Nome
   if (nome.value.trim() === "") {
     nome.classList.add('is-invalid');
     document.getElementById('erroNomeVazio').classList.remove('d-none');
@@ -95,7 +97,7 @@ function validarCamposBasicos() {  // simples e eficaz
     document.getElementById('erroNomeVazio').classList.add('d-none');
   }
 
-  // ===== Sobrenome =====
+  // Sobrenome
 if (sobrenome.value.trim() === "") {
   sobrenome.classList.add('is-invalid');
   document.getElementById('erroSobrenomeVazio').classList.remove('d-none');
@@ -105,7 +107,7 @@ if (sobrenome.value.trim() === "") {
   document.getElementById('erroSobrenomeVazio').classList.add('d-none');
 }
 
-  // ===== Email =====
+  // Email
   if (email.value.trim() === "") {
     email.classList.add('is-invalid');
     document.getElementById('erroEmailVazio').classList.remove('d-none');
@@ -120,7 +122,7 @@ if (sobrenome.value.trim() === "") {
     document.getElementById('erroEmailInvalido').classList.add('d-none');
   }
 
-  // ===== Telefone =====
+  // Telefone
   if (tel.value.trim() === "") {
     tel.classList.add('is-invalid');
     document.getElementById('erroTelefoneVazio').classList.remove('d-none');

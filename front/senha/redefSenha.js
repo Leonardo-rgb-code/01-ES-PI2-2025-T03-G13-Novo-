@@ -1,19 +1,22 @@
+// <!-- Autor: Gabrielle Mota -->
+
 const senha        = document.getElementById("senha");
 const confSenha    = document.getElementById("confSenha");
 const btnSenha     = document.getElementById("btnSenha");
 
+// Cria as regras da senha, a regex, para validação
 const senhaRegex   = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,20}$/;
 
 
 async function salvarSenha(){
   const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get("token");
+  const token = urlParams.get("token");  //gera o token e envia para o back no body
   const body = {
        senha : senha.value,
         token : token
     }
     fetch("http://localhost:3000/redefSenha", {
-  method: "POST", // tipo da requisição
+  method: "POST", // tipo da requisição, vai adicionar as informações, como o token no bd
   headers: {
     "Content-Type": "application/json", // informa que o corpo é JSON
   },
@@ -33,7 +36,7 @@ async function salvarSenha(){
 
 function validarSenhas() {
   let valido = true; // assume que está tudo certo no começo
-  // ======= SENHA =======
+  // Senha
   if (senha.value.trim() === "") {
     // campo vazio
     senha.classList.add('is-invalid');
@@ -53,7 +56,7 @@ function validarSenhas() {
     document.getElementById('erroSenhaInvalida').classList.add('d-none');
   }
 
-  // ======= CONFIRMAÇÃO DE SENHA =======
+  // Confirmação de senha
   if (confSenha.value.trim() === "") {
     // campo vazio
     confSenha.classList.add('is-invalid');
@@ -82,7 +85,7 @@ btnSenha.addEventListener("click", (event) => {
   // valida senhas e recebe se passou ou não
   const senhasValidas = validarSenhas();
 
-  // Se tudo válido, salvaa senha
+  // Se tudo válido, salva senha
   if (
     senhasValidas
   ) {

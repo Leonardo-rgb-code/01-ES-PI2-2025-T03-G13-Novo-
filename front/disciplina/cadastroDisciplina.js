@@ -1,5 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+// <!-- Autor: Gabrielle Mota, Matheus Ferreira -->
 
+document.addEventListener("DOMContentLoaded", () => {
+//Verifica se o usuário esta logado pelas informações salvas no localStorage
   verificarLogin();
 
   function verificarLogin() {
@@ -10,12 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
       throw new Error("Execução interrompida — usuário não logado.");
     }
   }
-
-  const usuarioId = localStorage.getItem("id");
+ 
+  const usuarioId = localStorage.getItem("id"); //pega o id do usuário no localStorage
   const urlParams = new URLSearchParams(window.location.search);
-  const cursoId = urlParams.get("cursoId");
+  const cursoId = urlParams.get("cursoId"); //pega o id do curso na url
 
-  if (!usuarioId) {
+  if (!usuarioId) { //redireciona se não encontrar dados salvos do usuário no localStorage
     alert("Erro: usuário não identificado. Faça login novamente.");
     window.location.href = "../login/login.html";
     throw new Error("Execução interrompida — sem ID de usuário.");
@@ -50,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   async function buscarDisciplinas(usuarioId, cursoId) {
-    try {
+    try { //busca as disciplinas cadastradas ligadas ao id do usuário e id do curso indicados
       const response = await fetch(`http://localhost:3000/disciplinas?usuarioId=${usuarioId}&cursoId=${cursoId}`);
       if (!response.ok) throw new Error("Erro ao buscar disciplinas");
       const lista = await response.json();
@@ -62,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function buscarCursoPeloId(cursoId) {
-    try {
+    try { //busca o curso relacionado aquele id que estava na url
       const response = await fetch(`http://localhost:3000/cursos/${cursoId}`);
       if (!response.ok) throw new Error("Erro ao buscar cursos");
       let curso = await response.json();
@@ -78,23 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
     console.log(lista)
     tbodyDisci.innerHTML = "";
     lista.forEach(inst => adicionarDisciplinaNaTabela(inst));
-  }
-
-  async function carregarCursos(instId) {
-  const res = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}&instId=${instId}`);
-  const lista = await res.json();
-}
+  } //carrega as disciplinas encontradas pelo back na tabela
 
   async function preencheTituloCurso() {
     let curso = await buscarCursoPeloId(cursoId);
     if (curso && nomeCursoTitulo) nomeCursoTitulo.innerText = curso.nome ?? "";
-  }
+  } //preenche o título pelo nome do curso do id indicado
 
   async function salvarDisciplina() {
     // pega o radio selecionado no momento do envio
     const periodoSelecionado = document.querySelector('input[name="periodo"]:checked');
     const periodo = periodoSelecionado ? periodoSelecionado.value : null;
 
+    //monta o body que vai enviar pro back com os valores
     const body = {
       nome: disciplinaInput.value.trim(),
       sigla: siglaDisci.value.trim(),
@@ -110,12 +108,13 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
-      });
+      }); //manda a requisição pro back adicioanr as informações do body
 
       if (!response.ok) throw new Error("Erro ao cadastrar disciplina");
 
       const data = await response.json();
       adicionarDisciplinaNaTabela(data);
+      //se tudo certo, adiciona os input na tabela
 
       // limpa campos
       disciplinaInput.value = "";
@@ -129,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Validação consolidada
+  // Valida os campos
   function validarCampos() {
     let valido = true;
 
@@ -172,12 +171,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function adicionarDisciplinaNaTabela(disciplina) {
-    // adapte os nomes dos campos conforme seu backend:
-    const id = disciplina.id ?? disciplina.id ?? disciplina.disciplinaId ?? disciplina.id_interno ?? null;
-    const nome = disciplina.nome_disciplina ?? disciplina.nome;
+    const id = disciplina.id;
+    const nome = disciplina.nome;
 
     const tr = document.createElement("tr");
-
+    
+    //cria as linhas na tabela
     tr.innerHTML = `
       <td>${nome}</td>
       <td>
@@ -192,11 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
         </button>
       </td>
     `;
-
+    //adiciona as linahs e o id da disciplina nos botões
     tbodyDisci.appendChild(tr);
   }
 
-  // Delegation para botões na tabela
+  // Botões
   tbodyDisci.addEventListener("click", async (e) => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -205,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.warn("Nenhum data-id encontrado no botão:", btn);
       return;
     }
-
+    //puxa o id da disciplina no url quando aperta os botões 
     if (btn.classList.contains("btnComponenteNotas")) {
       window.location.href = `../componentesNotas/cadastroCompNotas.html?disciplinaId=${disciplinaId}`;
       return;
@@ -222,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const response = await fetch(`http://localhost:3000/disciplinas/${disciplinaId}`, {
           method: "DELETE",
         });
-
+        //verifica se tem alguma tabela vinculada com o back
         if (response.status === 409) {
           alert("Não é possível excluir. Existem componente de notas ou turmas vinculadas.");
           return;
@@ -240,6 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   btnDisci.addEventListener("click", (event) => {
     event.preventDefault();
+    //se tudo ok, sala as informações na tabela
     if (validarCampos()) salvarDisciplina();
   });
 

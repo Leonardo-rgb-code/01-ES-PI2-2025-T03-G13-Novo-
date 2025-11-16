@@ -1,3 +1,5 @@
+<!-- Autor: Gabrielle Mota -->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -9,27 +11,23 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-
 <body class="bg-light">
   <div class="container py-5">
     <form>
       <!-- título da página -->
-      <h2 class="text-center mb-4">Cursos</h2>
+      <h2 class="text-center mb-4">Cursos</h2> <!-- Cria o id para dicionar o nome da instituição na página-->
       <h5 class="text-center mb-4 text-muted">Cadastre ou Edite seus Cursos Ministrados na Instituição: <strong id="nomeInstituicaoTitulo"></strong></h5>
       <h5 class="text-center mb-4 text-muted">Favor preencher todos os campos</h5>
-
       <!-- campo de cadastro -->
       <div class="mb-3">
         <label for="curso1" class="form-label">Nome do Curso</label>
         <input type="text" class="form-control" id="curso1" name="curso[]" placeholder="Informe o nome do curso" required>
         <div id="erroCursoVazio" class="invalid-feedback d-none">Preencha o nome do Curso.</div>
       </div>
-
       <!-- botão adicionar curso -->
       <div class="mb-4">
         <button type="button" id="btnCurso" class="btn btn-outline-secondary btn-sm">Adicionar Curso +</button>
       </div>
-
       <!-- tabela dos cursos cadastrados -->
       <h5 class="mb-3 text-center text-muted">Cursos Cadastrados</h5>
       <div class="table-responsive mb-4">
@@ -45,7 +43,7 @@
       </div>
     </form>
   </div>
-  <!-- botão página inicial centralizado -->
+  <!-- botão página inicial -->
   <div class="d-flex justify-content-center mt-4">
     <button type="button" class="btn btn-outline-secondary" id="btnInicial">
      <i class="bi bi-house-door me-1"></i> Página Inicial
