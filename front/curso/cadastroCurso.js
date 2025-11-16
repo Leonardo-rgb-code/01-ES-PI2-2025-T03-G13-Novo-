@@ -1,5 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+// <!-- Autor: Gabrielle Mota -->
 
+document.addEventListener("DOMContentLoaded", () => {
+//verifica se o usuário esta logado pelo localStorage
   verificarLogin();
 
   function verificarLogin() {
@@ -14,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const usuarioId = localStorage.getItem("id");
   const urlParams = new URLSearchParams(window.location.search);
-  const instId = urlParams.get("instId");
+  const instId = urlParams.get("instId"); //pega o id da instituição que esta na url
 
   if (!usuarioId) {
     alert("Erro: usuário não identificado. Faça login novamente.");
@@ -31,7 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 async function buscarCursos(usuarioId, instId) {
   try {
     const response = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}&instId=${instId}`);
-
+   //manda requisição para buscar os cursos cadastrados no id da instituição e do usuário indicados
     if (!response.ok) throw new Error("Erro ao buscar cursos");
 
     const lista = await response.json();
@@ -39,14 +41,14 @@ async function buscarCursos(usuarioId, instId) {
 
   } catch (error) {
     console.error("Erro ao carregar cursos:", error);
-    return [];
+    return []; //retorna lista vazia do back
   }
 }
 
 async function buscarInstituicaoPeloId(instId) {
   try {
     const response = await fetch(`http://localhost:3000/instituicoes/${instId}`);
-
+    //manda requisição para buscar a instituição pelo id indicado
     if (!response.ok) throw new Error("Erro ao buscar instituições");
 
     let lista = await response.json();
@@ -61,9 +63,9 @@ async function buscarInstituicaoPeloId(instId) {
 
 async function carregarCursos() {
   const lista = await buscarCursos(usuarioId, instId);
-
+  //carrega is cursos encontrados
   tbodyCurso.innerHTML = "";
-
+  //adiciona os cursos encontrados na tabela
   lista.forEach(inst => adicionarCursoNaTabela(inst));
 }
 
@@ -72,6 +74,7 @@ async function preencheTituloInstituicao() {
   nomeInstituicaoTitulo.innerText = instituicao.nome;
 }
 
+//cria o body para mandar na requisição pro back
   async function salvarCurso() {
     const body = {
       nome: curso.value.trim(),
@@ -87,7 +90,8 @@ async function preencheTituloInstituicao() {
       });
 
       if (!response.ok) throw new Error("Erro ao cadastrar curso");
-
+      
+      //se tudo ok, o back adiciona no bd e aqui adiciona na tabela
       const data = await response.json();
       adicionarCursoNaTabela(data);
 
@@ -97,7 +101,8 @@ async function preencheTituloInstituicao() {
       console.error(error);
     }
   }
-
+  
+  //Validar os campos, nome
   function validarCampos() {
     if (curso.value.trim() === "") {
       curso.classList.add("is-invalid");
@@ -113,8 +118,8 @@ async function preencheTituloInstituicao() {
   function adicionarCursoNaTabela(curso) {
 
     // Usa o ID correto conforme retorno do backend
-    const id = curso.id_curso ?? curso.id ?? curso.cursoId ?? curso.id_interno ?? null;
-    const nome = curso.nome_curso ?? curso.nome;
+    const id = curso.id;
+    const nome = curso.nome;
 
     const tr = document.createElement("tr");
 
@@ -129,17 +134,17 @@ async function preencheTituloInstituicao() {
         </button>
       </td>
     `;
-
+  //adiciona na tabela e coloca o id do curso nos botões
     tbodyCurso.appendChild(tr);
   }
 
-  // 🔥 Agora capta corretamente o botão clicado
+  // Botões
   tbodyCurso.addEventListener("click", async (e) => {
-    const btn = e.target.closest("button"); // <- Pega o botão mesmo clicando no ícone/texto
+    const btn = e.target.closest("button");
 
     if (!btn) return;
 
-    const cursoId = btn.dataset.id;   // <- Agora pega corretamente o ID da instituição
+    const cursoId = btn.dataset.id;   // <- pega o ID da instituição
 
     if (!cursoId) {
       console.warn("Nenhum data-id encontrado no botão:", btn);
@@ -159,6 +164,7 @@ async function preencheTituloInstituicao() {
           method: "DELETE",
         });
 
+        //manda requisição para verificar se existe alguma disciplina vinculada a esse curso
         if (response.status === 409) {
           alert("Não é possível excluir. Existem disciplinas vinculados.");
           return;
@@ -166,6 +172,7 @@ async function preencheTituloInstituicao() {
 
         if (!response.ok) throw new Error("Erro ao excluir instituição");
 
+        //remove da tabela a linha
         btn.closest("tr").remove();
 
       } catch (error) {
@@ -176,14 +183,15 @@ async function preencheTituloInstituicao() {
 
   btnCurso.addEventListener("click", (event) => {
     event.preventDefault();
-
+   
+    //se tudo ok adiciona na tabela 
     if (validarCampos()) salvarCurso();
 
   });
 
   btnInicial.addEventListener("click", async  () => {
     const totalCurso = await buscarCursos(usuarioId, instId);
-    if (totalCurso.length == 0) {
+    if (totalCurso.length == 0) { //se ja existir um curso e uma instituição cadastrada, deixa ir para página inical
       alert("Voce precisa cadastrar pelo menos uma instituição e um curso");
     } else {
       window.location.href = "../paginainicial/paginaInicial.html";
