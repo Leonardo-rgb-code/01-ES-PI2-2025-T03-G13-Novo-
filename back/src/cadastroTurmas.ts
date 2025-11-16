@@ -21,7 +21,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 
     if (disciplinaId) {
-      sql += " AND id_dsiciplina = ?";
+      sql += " AND id_disciplina = ?";
       params.push(disciplinaId);
     }
 
@@ -46,7 +46,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   const db = await getConn();
   try {
     const [rows]: any = await db.execute(
-      "SELECT * FROM turmas WHERE id = ?",
+      "SELECT * FROM turmas WHERE id_turma = ?",
       [id]
     );
 

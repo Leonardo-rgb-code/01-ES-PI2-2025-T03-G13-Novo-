@@ -10,6 +10,8 @@ import disciplinaRoutes from './cadastroDisciplinas';
 import turmasRoutes from './cadastroTurmas';
 import componentesNotasRoutes from './componenteNotas';
 import alunosRoutes from './cadastroAlunos';
+import notasRoutes from './notas';
+import mediasRoutes from './medias';
 import { initPool } from "./db";
 const app = express();
 //express é a biblioteca que facilita a criação do servidor web
@@ -30,9 +32,11 @@ app.use('/instituicoes', instituicaoRoutes);
 app.use('/recupSenha', recupSeanhaRoutes);
 app.use('/login', loginRoutes);
 app.use('/disciplinas', disciplinaRoutes);
-app.use('/cadastroTurmas', turmasRoutes)
+app.use('/turmas', turmasRoutes)
 app.use('/componenteNotas', componentesNotasRoutes);
-app.use('/CadastroAlunos', alunosRoutes);
+app.use('/alunos', alunosRoutes);
+app.use('/notas', notasRoutes);
+app.use('/medias', mediasRoutes);
 }
 
 bootstrap();

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async() => {
 // VERIFICA LOGIN
 verificarLogin();
 
@@ -31,12 +31,6 @@ btnLancarNotas.addEventListener("click", () => {
   window.location.href = `/front/notaFinal/NotaFinal.html?usuarioId=${usuarioId}`;
 });
 
-// botão de média final
-const btnMediaFinal = document.querySelector(".bi-calculator").closest(".card").querySelector("button");
-btnMediaFinal.addEventListener("click", () => {
-  window.location.href = `/front/mediaTurmas/mediaTurmas.html?usuarioId=${usuarioId}`;
-});
-
 // LOGOUT
 document.getElementById("btnLogout").addEventListener("click", () => {
   localStorage.removeItem("usuarioLogado");
@@ -45,4 +39,15 @@ document.getElementById("btnLogout").addEventListener("click", () => {
 
   window.location.href = "/front/login/login.html";
 });
+
+async function carregarCursos() {
+  const res = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}`);
+  const lista = await res.json();
+  return lista
+}
+
+const lista = await carregarCursos();
+if (lista.length <= 0) {
+  window.location.href = `/front/instituicao/cadastroInst.html?usuarioId=${usuarioId}`;
+}
 });

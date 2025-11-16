@@ -80,6 +80,11 @@ document.addEventListener("DOMContentLoaded", () => {
     lista.forEach(inst => adicionarDisciplinaNaTabela(inst));
   }
 
+  async function carregarCursos(instId) {
+  const res = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}&instId=${instId}`);
+  const lista = await res.json();
+}
+
   async function preencheTituloCurso() {
     let curso = await buscarCursoPeloId(cursoId);
     if (curso && nomeCursoTitulo) nomeCursoTitulo.innerText = curso.nome ?? "";
@@ -219,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         if (response.status === 409) {
-          alert("Não é possível excluir. Existem turmas vinculadas.");
+          alert("Não é possível excluir. Existem componente de notas ou turmas vinculadas.");
           return;
         }
 

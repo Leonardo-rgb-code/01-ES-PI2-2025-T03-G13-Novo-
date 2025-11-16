@@ -1,86 +1,176 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // ----- LOGIN (descomente se usar) -----
-  // function verificarLogin() {
-  //   const usuarioLogado = localStorage.getItem("usuarioLogado");
-  //   if (usuarioLogado !== "true") {
-  //     alert("Usuário não identificado. Faça login novamente.");
-  //     window.location.href = "../login/login.html";
-  //     throw new Error("Execução interrompida — usuário não logado.");
-  //   }
-  // }
-  // const usuarioId = localStorage.getItem("id");
-  // if (!usuarioId) { ... }
-  // verificarLogin();
+document.addEventListener("DOMContentLoaded", async () => {
 
-  // variáveis
+  function verificarLogin() {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+    if (usuarioLogado !== "true") {
+      alert("Usuário não identificado. Faça login novamente.");
+      window.location.href = "../login/login.html";
+      throw new Error("Execução interrompida — usuário não logado.");
+    }
+  }
+
+  const usuarioId = localStorage.getItem("id");
+  const urlParams = new URLSearchParams(window.location.search);
+  const disciplinaId = urlParams.get("disciplinaId");
+
+  verificarLogin();
+  carregarComponentesDoBanco();
+
   let componentes = [];
-  let componentesSalvos = false;
+  let componentesSalvos = true;
 
-  // elementos
   const componenteNomeNota = document.getElementById("componenteNota");
   const siglaCompoNota = document.getElementById("siglaCompNota");
   const descricaodaNota = document.getElementById("descricaoNota");
-  const tipoMediaRadios = document.getElementsByName("tipoMedia");
+  const radioArit = document.getElementById("mediaArit");
+  const radioPond = document.getElementById("mediaPond");
   const campoPeso = document.getElementById("campoPeso");
   const tabela = document.getElementById("tabelaComponentes");
   const colunaPeso = document.querySelector(".colPeso");
-
   const btnAdicionar = document.getElementById("btnAdicionar");
   const btnSalvar = document.getElementById("btnSalvarComponentes");
   const btnPaginaInicial = document.getElementById("btnPaginaInicial");
+  const pesoInput = document.getElementById("pesoNota");
 
-  function getTipoMediaSelecionada() {
-    return [...tipoMediaRadios].find(r => r.checked)?.value ?? null;
+  async function buscarDisciplina() {
+    try {
+      const response = await fetch(`http://localhost:3000/disciplinas/${disciplinaId}?usuarioId=${usuarioId}`);
+      if (!response.ok) throw new Error("Erro ao buscar disciplina");
+      const disciplina = await response.json();
+      return disciplina;
+    } catch (error) {
+      console.error("Erro ao carregar disciplinas:", error);
+      return {};
+    }
+  }
+  let disciplina = await buscarDisciplina()
+  document.getElementById("nomeDisciplinaTitulo").innerHTML = disciplina.nome;
+
+  // === CARREGAR DO BANCO AO ABRIR ===
+  async function carregarComponentesDoBanco() {
+    try {
+      const result = await fetch(
+        `http://localhost:3000/componenteNotas?usuarioId=${usuarioId}&disciplinaId=${disciplinaId}`
+      );
+
+      if (result.status !== 200) return;
+
+      const dados = await result.json();
+      componentes = dados.map(c => ({
+        id: c.id_componente,
+        nome: c.nome,
+        sigla: c.sigla,
+        desc: c.descricao || "",
+        peso: c.peso
+      }));
+
+      if (componentes.length > 0) {
+        const tipoExistente = componentes[0].peso === null ? "ARITMETICA" : "PONDERADA";
+        if (tipoExistente === "ARITMETICA") radioArit.checked = true;
+        else radioPond.checked = true;
+
+        atualizarVisibilidadePeso(tipoExistente);
+      }
+
+      atualizarTabela();
+
+    } catch (err) {
+      console.error("Erro ao carregar tabela:", err);
+    }
   }
 
-  // Remove erros quando usuário digita
+  async function remover(index) {
+    const componente = componentes[index];
+
+    if (componente.id) {
+      await fetch(`http://localhost:3000/componenteNotas/${componente.id}`, {
+        method: "DELETE",
+      });
+    }
+
+    componentes.splice(index, 1);
+    atualizarTabela();
+  }
+
+  function getTipoMediaSelecionada() {
+    if (radioArit.checked) return "ARITMETICA";
+    if (radioPond.checked) return "PONDERADA";
+    return null;
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, (m) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
+    );
+  }
+
+  // Remover erros quando digita
+
   componenteNomeNota.addEventListener("input", () => {
     componenteNomeNota.classList.remove("is-invalid");
     document.getElementById("erroComponenteVazio").classList.add("d-none");
   });
+
   siglaCompoNota.addEventListener("input", () => {
     siglaCompoNota.classList.remove("is-invalid");
     document.getElementById("erroSiglaVazio").classList.add("d-none");
   });
+
   descricaodaNota.addEventListener("input", () => {
     descricaodaNota.classList.remove("is-invalid");
     document.getElementById("erroDescVazio").classList.add("d-none");
   });
-  document.getElementById("pesoNota").addEventListener("input", () => {
-    const pesoInput = document.getElementById("pesoNota");
+
+  pesoInput.addEventListener("input", () => {
     pesoInput.classList.remove("is-invalid");
     document.getElementById("erroPesoVazio").classList.add("d-none");
     document.getElementById("erroPesoTotal").classList.add("d-none");
   });
 
-  // Bloqueia a troca de tipos de médias se ja tiver componente cadastrado
-  [...tipoMediaRadios].forEach(radio => {
-    radio.addEventListener("change", () => {
-      // se já existem componentes, não permite trocar o tipo
-      if (componentes.length > 0) {
-        const tipoExistente = componentes[0].peso === null ? "ARITMETICA" : "PONDERADA";
-        if (radio.value !== tipoExistente) {
-          document.getElementById("erroTrocaMedia").classList.remove("d-none");
-          // desmarcar o radio que foi marcado agora (mantém o anterior)
-          // procura o radio correspondente ao tipo existente e marca-o de volta
-          const radioAntigo = [...tipoMediaRadios].find(r => r.value === tipoExistente);
-          if (radioAntigo) radioAntigo.checked = true;
-          return;
-        }
-      }
-      // sem componentes, esconde erro e mostra/oculta campo peso conforme seleção
-      document.getElementById("erroTrocaMedia").classList.add("d-none");
-      if (radio.value === "PONDERADA") {
-        campoPeso.classList.remove("d-none");
-        colunaPeso.classList.remove("d-none");
-      } else {
-        campoPeso.classList.add("d-none");
-        colunaPeso.classList.add("d-none");
-      }
-    });
+  // Travar troca de tipo de média depois de adicionar componentes
+  function bloquearTroca(tipoExistente) {
+    if (tipoExistente === "ARITMETICA") {
+      radioArit.checked = true;
+      radioPond.checked = false;
+    } else {
+      radioArit.checked = false;
+      radioPond.checked = true;
+    }
+  }
+
+function atualizarVisibilidadePeso(tipo) {
+  if (tipo === "PONDERADA") {
+    console.log(colunaPeso)
+    campoPeso.classList.remove("d-none");
+    colunaPeso.classList.remove("d-none");
+  } else {
+    campoPeso.classList.add("d-none");
+    colunaPeso.classList.add("d-none");
+  }
+}
+
+  radioArit.addEventListener("change", () => {
+    if (componentes.length > 0 && componentes[0].peso !== null) {
+      document.getElementById("erroTrocaMedia").classList.remove("d-none");
+      bloquearTroca("PONDERADA");
+      return;
+    }
+    document.getElementById("erroTrocaMedia").classList.add("d-none");
+    atualizarVisibilidadePeso("ARITMETICA");
   });
 
-  // Validação
+  radioPond.addEventListener("change", () => {
+    if (componentes.length > 0 && componentes[0].peso === null) {
+      document.getElementById("erroTrocaMedia").classList.remove("d-none");
+      bloquearTroca("ARITMETICA");
+      return;
+    }
+    document.getElementById("erroTrocaMedia").classList.add("d-none");
+    atualizarVisibilidadePeso("PONDERADA");
+  });
+
+  // Validação de campos
+
   function validarCampos() {
     let valido = true;
 
@@ -88,116 +178,83 @@ document.addEventListener("DOMContentLoaded", () => {
       componenteNomeNota.classList.add("is-invalid");
       document.getElementById("erroComponenteVazio").classList.remove("d-none");
       valido = false;
-    } else {
-      componenteNomeNota.classList.remove("is-invalid");
-      document.getElementById("erroComponenteVazio").classList.add("d-none");
     }
 
     if (siglaCompoNota.value.trim() === "") {
       siglaCompoNota.classList.add("is-invalid");
       document.getElementById("erroSiglaVazio").classList.remove("d-none");
       valido = false;
-    } else {
-      siglaCompoNota.classList.remove("is-invalid");
-      document.getElementById("erroSiglaVazio").classList.add("d-none");
     }
 
     if (descricaodaNota.value.trim() === "") {
       descricaodaNota.classList.add("is-invalid");
       document.getElementById("erroDescVazio").classList.remove("d-none");
       valido = false;
-    } else {
-      descricaodaNota.classList.remove("is-invalid");
-      document.getElementById("erroDescVazio").classList.add("d-none");
     }
 
-    const tipoMedia = getTipoMediaSelecionada();
-    const pesoInput = document.getElementById("pesoNota");
+    const tipo = getTipoMediaSelecionada();
 
-    // se campo de peso está visível (modo ponderada) valida o input
-    if (!campoPeso.classList.contains("d-none")) {
-      if (!pesoInput.value.trim()) {
+    if (!tipo) {
+      document.getElementById("erroTipoMedia").classList.remove("d-none");
+      valido = false;
+    }
+
+    if (tipo === "PONDERADA") {
+      const valor = Number(pesoInput.value);
+      if (!pesoInput.value.trim() || Number.isNaN(valor) || valor <= 0 || valor > 100) {
         pesoInput.classList.add("is-invalid");
         document.getElementById("erroPesoVazio").classList.remove("d-none");
         valido = false;
-      } else {
-        // valor numérico entre 1 e 100
-        const v = Number(pesoInput.value);
-        if (Number.isNaN(v) || v <= 0 || v > 100) {
-          pesoInput.classList.add("is-invalid");
-          document.getElementById("erroPesoVazio").classList.remove("d-none");
-          valido = false;
-        } else {
-          pesoInput.classList.remove("is-invalid");
-          document.getElementById("erroPesoVazio").classList.add("d-none");
-        }
       }
-    } else {
-      // se campo de peso não visível, limpa possíveis mensagens
-      pesoInput.classList.remove("is-invalid");
-      document.getElementById("erroPesoVazio").classList.add("d-none");
-    }
-
-    // tipo de média precisa estar selecionado
-    if (!tipoMedia) {
-      document.getElementById("erroTipoMedia").classList.remove("d-none");
-      valido = false;
-    } else {
-      document.getElementById("erroTipoMedia").classList.add("d-none");
     }
 
     return valido;
   }
 
-  // Adiciona o componente
+  // Adicionar componente
+
   btnAdicionar.addEventListener("click", () => {
-    // chama validarCampos para exibir mensagens
+
     if (!validarCampos()) return;
 
-    const tipoMedia = getTipoMediaSelecionada();
     const nome = componenteNomeNota.value.trim();
-    const sigla = siglaCompoNota.value.trim();
+    const sigla = siglaCompoNota.value.trim().toUpperCase();
     const desc = descricaodaNota.value.trim();
-    const pesoInput = document.getElementById("pesoNota");
-    let peso = null;
+    const tipoMedia = getTipoMediaSelecionada();
 
-    if (!campoPeso.classList.contains("d-none")) {
-      const valor = pesoInput.value.trim();
-      peso = valor === "" ? null : Number(valor);
+    if (componentes.some(componente => componente.sigla.toUpperCase() === sigla)) {
+      alert(`Já existe um componente com a sigla "${sigla}" nesta lista.`);
+      return;
     }
 
-    componentes.push({ nome, sigla, desc, peso: peso === null ? null : peso });
+    const peso = tipoMedia === "PONDERADA" ? Number(pesoInput.value) : null;
+
+    componentes.push({ nome, sigla, desc, peso });
     componentesSalvos = false;
+
     atualizarTabela();
 
-    // limpa inputs
     componenteNomeNota.value = "";
     siglaCompoNota.value = "";
     descricaodaNota.value = "";
-    if (pesoInput) pesoInput.value = "";
-
-    // após adicionar, se houver componentes, fixa o tipo (impede troca)
-    // marca o radio correspondente ao tipo atual para manter coerência
-    if (tipoMedia) {
-      const radioAtual = [...tipoMediaRadios].find(r => r.value === tipoMedia);
-      if (radioAtual) radioAtual.checked = true;
-    }
+    pesoInput.value = "";
   });
 
-  // Atualiza Tabela
+  // Atualizar tabela
+
   function atualizarTabela() {
     tabela.innerHTML = "";
 
-    componentes.forEach((c, index) => {
+    componentes.forEach((componente, index) => {
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${escapeHtml(String(c.nome))}</td>
-        <td>${escapeHtml(String(c.sigla))}</td>
-        <td>${escapeHtml(String(c.desc))}</td>
-        <td class="${c.peso !== null ? "" : "d-none"}">${c.peso !== null ? escapeHtml(String(c.peso)) : ""}</td>
+        <td>${escapeHtml(componente.nome)}</td>
+        <td>${escapeHtml(componente.sigla)}</td>
+        <td>${escapeHtml(componente.desc)}</td>
+        <td class="${componente.peso !== null ? "" : "d-none"}">${componente.peso ?? ""}</td>
         <td>
-          <button class="btn btn-danger btn-sm btn-remover" data-index="${index}">
-            <i class="bi bi-trash"></i>
+         <button type="button" class="btn btn-danger btn-sm btn-remover" data-index="${index}">
+            Excluir
           </button>
         </td>
       `;
@@ -205,99 +262,85 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     tabela.querySelectorAll(".btn-remover").forEach(btn => {
-      btn.addEventListener("click", (e) => {
+      btn.addEventListener("click", () => {
         const idx = Number(btn.dataset.index);
         remover(idx);
       });
     });
   }
 
-  function escapeHtml(str) {
-    return str.replace(/[&<>"']/g, (m) => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-  }
-
-  // Remove componente
-  function remover(i) {
-    componentes.splice(i, 1);
-    componentesSalvos = false;
-    atualizarTabela();
-  }
-
   window.remover = remover;
 
-  // Botão para salvar no banco de dados
-  btnSalvar.addEventListener("click", async () => {
-    if (componentes.length === 0) {
-      alert("Adicione ao menos um componente antes de salvar.");
+  // Salvar no banco de dados
+
+btnSalvar.addEventListener("click", async () => {
+
+  if (componentes.length === 0) {
+    alert("Adicione ao menos um componente antes de salvar.");
+    return;
+  }
+
+  const tipoMedia = getTipoMediaSelecionada();
+
+  if (tipoMedia === "PONDERADA") {
+    const soma = componentes.reduce((acc, componente) => acc + (componente.peso ?? 0), 0);
+    if (soma !== 100) {
+      document.getElementById("erroPesoTotal").classList.remove("d-none");
       return;
     }
+  }
 
-    // antes de salvar, valida novamente
-    if (!validarCampos()) return;
+  document.getElementById("erroPesoTotal").classList.add("d-none");
 
-    const tipoMedia = getTipoMediaSelecionada();
+  // 🔥 Filtrar apenas novos componentes (sem ID)
+  const novosComponentes = componentes.filter(c => !c.id);
 
-    if (tipoMedia === "PONDERADA") {
-      const soma = componentes.reduce((acc, c) => acc + (c.peso ?? 0), 0);
-      if (soma !== 100) {
-        document.getElementById("erroPesoTotal").classList.remove("d-none");
-        return;
-      } else {
-        document.getElementById("erroPesoTotal").classList.add("d-none");
-      }
-    } else {
-      document.getElementById("erroPesoTotal").classList.add("d-none");
-    }
-
-    // ----- AQUI VAI A REQUISIÇÃO PARA O BACKEND -----
-    // Substitua a URL e payload conforme sua API.
-    // Exemplo (descomente e ajuste conforme necessário):
-    btnSalvar.addEventListener("click", async () => {
-    if (componentes.length === 0) {
-      alert("Adicione ao menos um componente antes de salvar.");
-      return;
-    }
-    const usuarioId = localStorage.getItem("id");
-    const disciplinaId = localStorage.getItem("disciplinaId");
-
-    try {
-      for (const c of componentes) {
-        await fetch("http://localhost:3000/componentesNotas", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            nome: c.nome,
-            sigla: c.sigla,
-            peso: c.peso,    // aceita null ou número
-            usuarioId,
-            disciplinaId
-          })
-        });
-      }
-
-      alert("Componentes salvos com sucesso!");
-      componentesSalvos = true;
-
-    } catch (err) {
-      console.error(err);
-      alert("Erro ao salvar no servidor.");
-    }
-  });
-
+  if (novosComponentes.length === 0) {
+    alert("Nenhum novo componente para salvar.");
     componentesSalvos = true;
-    alert("Componentes salvos com sucesso!");
-  });
+    return;
+  }
 
-  // Págins inicial (confirmação se não salvo) -----
-  btnPaginaInicial.addEventListener("click", (e) => {
+  // Antes de salvar, verificar sigla no banco
+  for (const componente of novosComponentes) {
+    const result = await fetch(
+      `http://localhost:3000/componenteNotas?sigla=${componente.sigla}&usuarioId=${usuarioId}&disciplinaId=${disciplinaId}`
+    );
+
+    if (result.status === 200) {
+      alert(`Já existe um componente com a sigla "${componente.sigla}" no banco.`);
+      return;
+    }
+  }
+
+  // Enviar apenas os novos
+  for (const componente of novosComponentes) {
+    await fetch("http://localhost:3000/componenteNotas", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome: componente.nome,
+        sigla: componente.sigla,
+        peso: componente.peso,
+        usuarioId,
+        disciplinaId,
+        descricao: componente.desc
+      }),
+    });
+  }
+
+  componentesSalvos = true;
+  alert("Novos componentes salvos com sucesso!");
+});
+
+
+  // Botão página inicial
+
+  btnPaginaInicial.addEventListener("click", () => {
     if (!componentesSalvos && componentes.length > 0) {
-      const sair = confirm("Você ainda não salvou os componentes. Deseja sair e perder os dados?");
+      const sair = confirm("Você ainda não salvou os componentes. Deseja sair?");
       if (!sair) return;
     }
     window.location.href = "../paginainicial/paginaInicial.html";
   });
-
-  // inicializa: (esconde campo peso por padrão)
-  campoPeso.classList.add("d-none");
-  colunaPeso.classList.add("d-none");
 });

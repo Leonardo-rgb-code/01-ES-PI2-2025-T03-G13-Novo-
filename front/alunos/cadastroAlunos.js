@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function carregarAlunos() {
     try {
-      const response = await fetch(`http://localhost:3000/alunos/turma/${turmaId}`);
+      const response = await fetch(`http://localhost:3000/alunos?turmaId=${turmaId}&usuarioId=${usuarioId}`);
       if (!response.ok) throw new Error("Erro ao carregar alunos");
 
       const lista = await response.json();
@@ -78,10 +78,22 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Erro ao carregar:", error);
     }
   }
+
+    async function buscarTurmasPeloId() {
+    try {
+      const response = await fetch(`http://localhost:3000/turmas/${turmaId}`);
+      if (!response.ok) throw new Error("Erro ao buscar disciplina");
+      let turma = await response.json();
+      return turma;
+    } catch (error) {
+      console.error("Erro ao carregar disciplina:", error);
+      return null;
+    }
+  }
   carregarAlunos();
 
     async function preencheTituloTurma() {
-    let turma = await buscarTurmaPeloId(TurmaId);
+    let turma = await buscarTurmasPeloId();
     if (turma && nomeTurmaTitulo) nomeTurmaTitulo.innerText = turma.nome ?? "";
   }
 
@@ -122,12 +134,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Adicionar linha na tabela
   function adicionarAlunoNaTabela(aluno) {
     const tr = document.createElement("tr");
-
     tr.innerHTML = `
       <td>${aluno.matricula}</td>
       <td>${aluno.nome}</td>
       <td>
-        <button type="button" class="btn btn-danger btn-sm btnExcluirAluno" data-id="${aluno.id}">
+        <button type="button" class="btn btn-danger btn-sm btnExcluirAluno" data-id="${aluno.matricula}">
           Excluir
         </button>
       </td>
@@ -245,6 +256,7 @@ inputCSV.addEventListener("change", function () {
         if (!response.ok) throw new Error("Erro ao importar aluno");
 
         const alunoCriado = await response.json();
+        console.log(alunoCriado)
         adicionarAlunoNaTabela(alunoCriado);
         totalNovos++;
 
@@ -260,6 +272,7 @@ inputCSV.addEventListener("change", function () {
         `⚠ Duplicados ignorados: ${duplicados}`
       );
     }, 500);
+    inputCSV.value = "";
   }
   preencheTituloTurma();
 

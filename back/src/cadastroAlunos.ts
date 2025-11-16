@@ -8,9 +8,8 @@ const router = Router();
  */
 router.get("/", async (req: Request, res: Response) => {
   const usuarioId = req.query.usuarioId;
-  const turmaId = req.query.trumaId;
+  const turmaId = req.query.turmaId;
   const db = await getConn();
-
   try {
     let sql = "SELECT * FROM alunos";
     let params: any[] = [];
@@ -21,7 +20,7 @@ router.get("/", async (req: Request, res: Response) => {
     }
 
     if (turmaId) {
-      sql += " AND id_truma = ?";
+      sql += " AND id_turma = ?";
       params.push(turmaId);
     }
 
@@ -70,20 +69,33 @@ router.post("/", async (req: Request, res: Response) => {
 
   const db = await getConn();
   try {
-    const [result]: any = await db.execute(
+    await db.execute(
       "INSERT INTO alunos (matricula, nome, id_usuario, id_turma) VALUES (?, ?, ?, ?)",
       [matricula, nome, usuarioId, turmaId]
     );
 
-    return res.status(201).json({ //to mandando pro frontend a resposta
-      id: result.insertId, //o id foi preenchido
+    return res.status(201).json({
+      id: matricula,
       nome,
       usuarioId,
-      turmaId
+      turmaId,
+      matricula
     });
 
-  } catch (error) {
-    return res.status(500).json({ message: "Erro ao cadastrar aluno", error });
+  } catch (error: any) {
+
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({
+        message: "Já existe um aluno com essa matrícula."
+      });
+    }
+
+    // Erro genérico
+    return res.status(500).json({
+      message: "Erro ao cadastrar aluno",
+      error
+    });
+
   } finally {
     db.release();
   }
@@ -92,17 +104,14 @@ router.post("/", async (req: Request, res: Response) => {
 /**
  * DELETE /aluno/:id
  */
-router.delete("/:id", async (req: Request, res: Response) => {
-  const id = Number(req.params.id);
+router.delete("/:matricula", async (req: Request, res: Response) => {
+  const matricula = req.params.matricula;
 
-  if (isNaN(id)) {
-    return res.status(400).json({ message: "ID inválido" });
-  }
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
       "DELETE FROM alunos WHERE matricula = ?",
-      [id]
+      [matricula]
     );
 
     if (result.affectedRows === 0) {
