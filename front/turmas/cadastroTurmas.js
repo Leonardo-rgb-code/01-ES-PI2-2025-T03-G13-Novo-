@@ -60,9 +60,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function carregarTurmas() {
     const lista = await buscarTurmas(usuarioId, disciplinaId);
-    console.log(lista)
     tabelaTurmas.innerHTML = "";
-    lista.forEach(inst => adicionarTurmasNaTabela(inst));
+    lista.forEach(turma => adicionarTurmaNaTabela(turma));
   }
 
   async function preencheTituloDisciplina() {
@@ -79,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await fetch("http://localhost:3000/cadastroTurmas", {
+      const response = await fetch("http://localhost:3000/turmas", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
@@ -116,9 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function adicionarTurmaNaTabela(turma) {
     // adapte os nomes dos campos conforme seu backend:
-    const id = turma.id ?? turma.id ?? turma.turmaId ?? turma.id_interno ?? null;
+    const id = turma.id_turma ?? turma.id ?? turma.turmaId ?? turma.id_interno ?? null;
     const nome = turma.nome_turma ?? turma.nome;
-
+    const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${nome}</td>
       <td>
@@ -149,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    if (btn.classList.contains("btnExcluirDisciplina")) {
+    if (btn.classList.contains("btnExcluirTurma")) {
       if (!confirm("Deseja realmente excluir esta Turma?")) return;
       try {
         const response = await fetch(`http://localhost:3000/turmas/${turmaId}`, {

@@ -52,7 +52,7 @@
 
     <!-- TABELA DE LANÇAMENTO DE NOTAS -->
     <div class="table-responsive mb-4">
-      <table class="table table-striped table-hover align-middle text-center">
+      <table class="table table-striped table-hover align-middle text-center" id="tabelaMedias">
         <thead id="tabelaHead" class="table-secondary">
           <!-- Cabeçalho gerado dinamicamente -->
         </thead>
@@ -64,7 +64,11 @@
     </div>
 
     <!-- Botão Salvar Notas -->
-    <div class="d-flex justify-content-end mt-4">
+    <div class="d-flex justify-content-between mt-4">
+      <button id="btnExportar" class="btn btn-success" disabled>
+        <i class="bi bi-file-earmark-excel me-2"></i> Exportar Médias
+      </button>
+
       <button id="btnSalvarNotas" class="btn btn-success">
         <i class="bi bi-check2-square me-2"></i> Salvar Notas
       </button>

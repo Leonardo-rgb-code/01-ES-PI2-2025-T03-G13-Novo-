@@ -9,6 +9,7 @@ const router = Router();
 router.get("/", async (req: Request, res: Response) => {
   const usuarioId = req.query.usuarioId;
   const disciplinaId = req.query.disciplinaId;
+  const sigla = req.query.sigla;
   const db = await getConn();
 
   try {
@@ -21,11 +22,20 @@ router.get("/", async (req: Request, res: Response) => {
     }
 
     if (disciplinaId) {
-      sql += " AND id_dsiciplina = ?";
+      sql += " AND id_disciplina = ?";
       params.push(disciplinaId);
     }
 
-    const [rows] = await db.execute(sql, params);
+    if (sigla) {
+      sql += " AND sigla = ?";
+      params.push(sigla);
+    }
+
+    const [rows] : any = await db.execute(sql, params);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: "Componente de notas não encontrado" });
+    }
     return res.json(rows);
   } catch (error) {
     return res.status(500).json({ message: "Erro ao buscar Componentes de Notas", error });
@@ -66,23 +76,24 @@ router.get("/:id", async (req: Request, res: Response) => {
  * POST /Componentes de Notas
  */
 router.post("/", async (req: Request, res: Response) => {
-  const { nome, sigla, peso, usuarioId, disciplinaId } = req.body;
+  const { nome, sigla, peso, usuarioId, disciplinaId, descricao } = req.body;
   const pesoFinal = (peso === "" || peso === undefined) ? null : peso;
 
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
-      "INSERT INTO componentes_notas (nome, sigla, peso, id_usuario, id_disciplina) VALUES (?, ?, ?, ?, ?)",
-      [nome, sigla, pesoFinal, usuarioId, disciplinaId]
+      "INSERT INTO componentes_notas (nome, sigla, peso, id_usuario, id_disciplina, descricao) VALUES (?, ?, ?, ?, ?, ?)",
+      [nome, sigla, pesoFinal, usuarioId, disciplinaId, descricao]
     );
 
     return res.status(201).json({
-      id: result.insertId,
+      id_componente: result.insertId,
       nome,
       sigla,
       peso: pesoFinal,
       usuarioId,
-      disciplinaId
+      disciplinaId,
+      descricao
     });
   } catch (error) {
     return res.status(500).json({ message: "Erro ao cadastrar componente de nota", error });
@@ -103,7 +114,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
-      "DELETE FROM componentes_notas WHERE id = ?",
+      "DELETE FROM componentes_notas WHERE id_componente = ?",
       [id]
     );
 

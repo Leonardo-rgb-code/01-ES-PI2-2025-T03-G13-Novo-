@@ -160,7 +160,7 @@ async function preencheTituloInstituicao() {
         });
 
         if (response.status === 409) {
-          alert("Não é possível excluir. Existem cursos vinculados.");
+          alert("Não é possível excluir. Existem disciplinas vinculados.");
           return;
         }
 
