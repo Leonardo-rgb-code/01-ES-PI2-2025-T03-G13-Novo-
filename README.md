@@ -8,10 +8,10 @@ eficiente.
 O sistema nota dez é uma ferramenta full-stack criada para facilitar a gestão de
 dados educacionais, principalmente notas de alunos. Facilita também o controle do docente 
 de suas instituições de trabalho, dos cursos que participa em cada uma delas e quais disciplinas ministra,
-organizando assim de forma eficiente todas as trumas ligadas diretamente a ele. Permite que 
+organizando assim de forma eficiente todas as turmas ligadas diretamente a ele. Permite que 
 o docente aplique quantas atividades avaliativas/ provas desejar, de forma livre. O docente pode
 escolher entre média ponderada (distribuindo os pesos em cada atividade) ou aritimética, e após o
-lançamento das notas, o sistema nota dez ja entrega as médias calculas por aluno e prontas para serem
+lançamento das notas, o sistema nota dez ja entrega as médias calculadas por aluno e prontas para serem
 exportadas em arquivo CSV. 
 O sistema combina uma API backend robusta com interfaces frontend intuitivas, permitindo integração 
 fluida e automação eficiente de fluxos de trabalho em plataformas acadêmicas.
@@ -24,7 +24,7 @@ e ligados um ao outro de forma hierárquica, não permitindo a exclusão ou edi�
 a ordem de criação.
 - Função de login: cadastro do usuário não permite acesso anônimo em nenhuma tela, com sistema de recuperar a
 senha via e-mail caso o usuário a perca/esqueça.
-- Componentes de notas: cada disciplina possui seus próprios componentes de notas ilimitados, sendo compartilhados por 
+- Componentes de notas: cada disciplina possui seus próprios componentes de notas ilimitadas, sendo compartilhados por 
 suas turmas.  
 - Médias: a funcionlidade da média exige que o usuário indique qual tipo de média vai desejar dentro das opções PONDERADA
 ou ARITIMÉTICA, não existindo outra opção. Se desejar a opção de média PONDERADA, vai distribuir os pesos entre os
@@ -35,7 +35,7 @@ indicar a MATRÍCULA e o nome completo do mesmo. A matrícula não poderá se re
 aquela matrícula. O cadastro de alunos pode ser feito também via importação de arquivo, esse sistema só suporta 
 a extensão de arquivo CSV, que deve possuir 2 colunas principais e iniciais com os nomes MATRÍCULA e NOME, qualquer
 outra coluna no arquivo será desconsiderada.
-- Exportação de médias/ notas: o sistema permite a exportação de notas somente quando todos os componentes de notas
+- Exportação de médias/ notas: o sistema permite a exportação de notas somente quando todos os componentes do mesmo
 forem preenchidos de todos os alunos daquela turma, e as médias finais calculadas. A existência de qualquer campo de 
 componente de notas em branco, impede a exportação. Assim que for desejada a exportação, será feito o download imediado
 de um arquivo CSV com todos os alunos, suas matrículas, as notas lançadas e as respectivas médias finais de cada um.
