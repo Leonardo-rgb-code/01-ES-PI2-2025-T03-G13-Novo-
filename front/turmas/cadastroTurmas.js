@@ -1,3 +1,6 @@
+// <!-- Autor: Gabrielle Mota, Bruno Terra -->
+
+
 document.addEventListener("DOMContentLoaded", () => {
 
   verificarLogin();
