@@ -15,7 +15,7 @@ export async function initPool(): Promise<void> {
       queueLimit: 0
   });
   
-  console.log("✅ Pool de conexões MySQL iniciado.");
+  console.log("Pool de conexões MySQL iniciado.");
 }
 
 /**

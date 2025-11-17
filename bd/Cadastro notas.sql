@@ -13,7 +13,7 @@ CREATE TABLE notas (
     matricula VARCHAR(100), 
     id_componente INT,
     FOREIGN KEY (id_usuario) REFERENCES usuarios(id),
-    FOREIGN KEY (matricula) REFERENCES alunos(matricula),
+    FOREIGN KEY (matricula, id_turma) REFERENCES alunos(matricula, id_turma),
     FOREIGN KEY (id_turma) REFERENCES turmas(id_turma),
     FOREIGN KEY (id_componente) REFERENCES componentes_notas(id_componente)
 );

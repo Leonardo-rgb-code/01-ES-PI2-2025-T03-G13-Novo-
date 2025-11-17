@@ -147,7 +147,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 function atualizarVisibilidadePeso(tipo) {
   if (tipo === "PONDERADA") {
-    console.log(colunaPeso)
     campoPeso.classList.remove("d-none");
     colunaPeso.classList.remove("d-none");
   } else {

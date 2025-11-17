@@ -77,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function carregarDisciplinas() {
     const lista = await buscarDisciplinas(usuarioId, cursoId);
-    console.log(lista)
     tbodyDisci.innerHTML = "";
     lista.forEach(inst => adicionarDisciplinaNaTabela(inst));
   } //carrega as disciplinas encontradas pelo back na tabela

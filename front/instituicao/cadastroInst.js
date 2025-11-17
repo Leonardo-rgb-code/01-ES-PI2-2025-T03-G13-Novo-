@@ -173,7 +173,6 @@ async function carregarInstituicoes() {
 
   btnInicial.addEventListener("click", async  () => {
     const totalInstituicao = await buscarInstituicoes(usuarioId);
-    console.log(totalInstituicao)
     if (totalInstituicao.length == 0) { //confirma se ja existe uma instituição cadastrada para permitir que vá para tela inicial
       alert("Voce precisa cadastrar pelo menos uma instituição e um curso");
     } else {

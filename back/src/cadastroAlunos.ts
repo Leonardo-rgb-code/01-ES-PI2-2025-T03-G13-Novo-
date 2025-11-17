@@ -108,12 +108,13 @@ router.post("/", async (req: Request, res: Response) => {
  */
 router.delete("/:matricula", async (req: Request, res: Response) => {
   const matricula = req.params.matricula;
+  const turmaId = req.query.turmaId;
 
   const db = await getConn();
   try {
     const [result]: any = await db.execute(
-      "DELETE FROM alunos WHERE matricula = ?",
-      [matricula]
+      "DELETE FROM alunos WHERE matricula = ? and id_turma = ?",
+      [matricula, turmaId]
     );
 
     if (result.affectedRows === 0) {

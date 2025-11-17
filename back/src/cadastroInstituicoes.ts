@@ -11,7 +11,6 @@ const router = Router();
 router.get("/", async (req: Request, res: Response) => {
   const usuarioId = req.query.usuarioId;
   const db = await getConn();
-  console.log(usuarioId)
   try {
     let sql = "SELECT * FROM instituicoes";
     let params: any[] = [];

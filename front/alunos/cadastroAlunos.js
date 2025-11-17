@@ -159,7 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!confirm("Deseja realmente excluir este aluno?")) return;
     // confirmação para excluir o aluno
     try {
-      const response = await fetch(`http://localhost:3000/alunos/${id}`, {
+      const response = await fetch(`http://localhost:3000/alunos/${id}?turmaId=${turmaId}`, {
         method: "DELETE"
       });
       if (response.status === 409) { //se o backend retornar o erro 409, indica que a FK esta sendo usada em outro lugar
