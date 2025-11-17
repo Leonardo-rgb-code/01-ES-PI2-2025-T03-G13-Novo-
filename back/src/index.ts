@@ -1,3 +1,6 @@
+// Autor: Gabrielle Mota, Bruno Terra
+
+//cria as rotas para o front mandar as requisições pro back
 import express from "express";
 import cors from "cors"
 import loginRoutes from './login';
@@ -17,14 +20,17 @@ const app = express();
 //express é a biblioteca que facilita a criação do servidor web
 app.use(express.json());
 
+//cors permite que o back se comunique com o front em domínios diferentes
 app.use(cors());
 
+//cria a função pra iniciar o servidor
 async function bootstrap() {
-  await initPool();
+  await initPool(); //cria o pool e inicia o servidor
   app.listen(3000, () => {
-    console.log("Servidor ativo na porta 3000");
+    console.log("Servidor ativo na porta 3000"); //inicia o servidor na porta 3000
 });
 
+//utiliza as rotas criadas
 app.use('/cursos', cadastroCursosoRoutes);
 app.use('/usuarios', cadastroUsuarioRoutes);
 app.use('/redefSenha', redefSenhaRoutes);

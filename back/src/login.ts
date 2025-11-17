@@ -1,8 +1,10 @@
+// Autor: Gabrielle Mota
+
 import { getConn } from "./db";
 import  { Router, Request, Response } from "express";
 
 const router = Router();
-
+//importa as rotas e diz em quais tipos e como será recebida as requisições
 interface Usuario {
     id: number;
     email: string;
@@ -15,7 +17,7 @@ router.post("/", async (req: Request, res: Response) => {
     let dados = req.body;
     const db = await getConn();
     try { 
-        // Busca usuário pelo email
+        // Busca usuário pelo email e senha
         const [rows] = await db.execute(
             'SELECT id, email, senha, nome FROM usuarios WHERE email = ? AND senha = ?',
             [dados['email'], dados['senha']]

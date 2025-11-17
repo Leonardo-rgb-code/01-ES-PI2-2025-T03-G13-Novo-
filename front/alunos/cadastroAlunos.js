@@ -1,4 +1,7 @@
+// <!-- Autor: Gabrielle Mota-->
+
 document.addEventListener("DOMContentLoaded", () => {
+  // verifica se o usuário esta logado com os dados salvos no localStorage
   verificarLogin();
 
   function verificarLogin() {
@@ -11,9 +14,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // IDs via URL/localStorage
-  const usuarioId = localStorage.getItem("id");
+  const usuarioId = localStorage.getItem("id"); // pega o id do usuário no localStorage
   const urlParams = new URLSearchParams(window.location.search);
-  const turmaId = urlParams.get("turmaId");
+  const turmaId = urlParams.get("turmaId"); //pega o id da turma na url
 
   if (!usuarioId) {
     alert("Erro: usuário não identificado. Faça login novamente.");
@@ -64,34 +67,33 @@ document.addEventListener("DOMContentLoaded", () => {
   }
  
 // Carregar Alunos
-
   async function carregarAlunos() {
     try {
       const response = await fetch(`http://localhost:3000/alunos?turmaId=${turmaId}&usuarioId=${usuarioId}`);
       if (!response.ok) throw new Error("Erro ao carregar alunos");
-
+      //manda requisição pro back consultar os alunos salvos naquela turma e naquele usuário pelos id
       const lista = await response.json();
       tabelaAlunos.innerHTML = "";
       lista.forEach(adicionarAlunoNaTabela);
-
+     //adiciona na tabela os alunos que retornarem
     } catch (error) {
       console.error("Erro ao carregar:", error);
     }
   }
 
     async function buscarTurmasPeloId() {
-    try {
+    try { //burca a turma pelo id que pegou na url pra ver se existe
       const response = await fetch(`http://localhost:3000/turmas/${turmaId}`);
-      if (!response.ok) throw new Error("Erro ao buscar disciplina");
+      if (!response.ok) throw new Error("Erro ao buscar turma");
       let turma = await response.json();
       return turma;
     } catch (error) {
-      console.error("Erro ao carregar disciplina:", error);
+      console.error("Erro ao carregar turma:", error);
       return null;
     }
   }
   carregarAlunos();
-
+    //preenche com o nome da turma no título da página
     async function preencheTituloTurma() {
     let turma = await buscarTurmasPeloId();
     if (turma && nomeTurmaTitulo) nomeTurmaTitulo.innerText = turma.nome ?? "";
@@ -99,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Salvar aluno
   async function salvarAlunos() {
-    const body = {
+    const body = { //monta o body pra mandar pro back a requisição com os dados
       matricula: matriculaAluno.value.trim(),
       nome: nomeAluno.value.trim(),
       usuarioId: usuarioId,
@@ -116,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) {
         if (response.status === 409) {
           alert("Já existe um aluno com essa matrícula.");
-        }
+        }  //manda uma requisição pro back verificar se ja existe uma matrícula igual a que esta sendo cadastrada
         throw new Error("Erro ao cadastrar aluno");
       }
 
@@ -143,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
         </button>
       </td>
     `;
-
+    // adiciona aluno na tabela, cria a linha e coloca o id no botão de excluir
     tabelaAlunos.appendChild(tr);
   }
 
@@ -155,14 +157,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const id = btn.dataset.id;
 
     if (!confirm("Deseja realmente excluir este aluno?")) return;
-
+    // confirmação para excluir o aluno
     try {
       const response = await fetch(`http://localhost:3000/alunos/${id}`, {
         method: "DELETE"
       });
-
+      if (response.status === 409) { //se o backend retornar o erro 409, indica que a FK esta sendo usada em outro lugar
+        alert("Não é possível excluir. Existem notas lançadas.");
+        return;
+      }
       if (!response.ok) throw new Error("Erro ao excluir aluno");
-
+      
       btn.closest("tr").remove();
 
     } catch (err) {
@@ -199,10 +204,10 @@ inputCSV.addEventListener("change", function () {
     return;
   }
 
-  const leitor = new FileReader();
+  const leitor = new FileReader(); //função do js que lê arquivos
 
-  leitor.onload = function (evento) {
-    const conteudo = evento.target.result;
+  leitor.onload = function (evento) { //depois que terminar de ler o arquivo vem a função
+    const conteudo = evento.target.result; //salva o resultado aqui, que é o conteúdo lido do arquivo
 
     // valida se realmente parece CSV, com informações dividas por vírgula
     if (!conteudo.includes(",") && !conteudo.includes(";")) {
@@ -211,19 +216,19 @@ inputCSV.addEventListener("change", function () {
       return;
     }
 
-    processarCSV(conteudo);
+    processarCSV(conteudo);  
   };
 
-  leitor.readAsText(arquivo, "UTF-8");
+  leitor.readAsText(arquivo, "UTF-8"); // vai ler o arquivo como um texto, função do js
 });
 
   // Processamento CSV
-  function processarCSV(texto) {
-    const linhas = texto.split("\n").map(l => l.trim()).filter(l => l !== "");
-
+  function processarCSV(texto) { //aqui é uma string 'texto' tem linha por linha do conteúdo lido do arquivo csv
+    const linhas = texto.split("\n").map(l => l.trim()).filter(l => l !== ""); //cada quebra de linha vira uma array...
+    //... remove espaços no começo e final, remove linhas vazias
     // Remove cabeçalho se existir
     if (linhas[0].toLowerCase().includes("matricula")) {
-      linhas.shift();
+      linhas.shift(); //remove o primeiro elemento do array / a primeira linha do csv, o cabeçalho
     }
 
     let totalNovos = 0;
@@ -233,7 +238,7 @@ inputCSV.addEventListener("change", function () {
       const [matricula, nome] = linha.split(",").map(x => x.trim());
 
       if (!matricula || !nome) return;
-
+      //monta o body pra requisição do back
       const body = {
         matricula,
         nome,
@@ -244,11 +249,11 @@ inputCSV.addEventListener("change", function () {
       try {
         const response = await fetch("http://localhost:3000/alunos", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json" },// fala que a requisição sera emm formato json
           body: JSON.stringify(body)
         });
 
-        if (response.status === 409) {
+        if (response.status === 409) { //se encontrar matrícula igual, da erro e não salva/substitui
           duplicados++;
           return;
         }
@@ -256,8 +261,7 @@ inputCSV.addEventListener("change", function () {
         if (!response.ok) throw new Error("Erro ao importar aluno");
 
         const alunoCriado = await response.json();
-        console.log(alunoCriado)
-        adicionarAlunoNaTabela(alunoCriado);
+        adicionarAlunoNaTabela(alunoCriado); //adiciona na tabela
         totalNovos++;
 
       } catch (e) {
@@ -266,12 +270,12 @@ inputCSV.addEventListener("change", function () {
     });
 
     setTimeout(() => {
-      alert(
+      alert(//mostra quantos alunos foram adicionados e quantos tinham duplicados no back
         `Importação concluída!\n\n` +
         `✔ Novos alunos adicionados: ${totalNovos}\n` +
         `⚠ Duplicados ignorados: ${duplicados}`
       );
-    }, 500);
+    }, 500); //set timeout 500, fala para ele executar essa função depois de 500ms (0.5 segundos)
     inputCSV.value = "";
   }
   preencheTituloTurma();

@@ -1,3 +1,5 @@
+-- Autor: Gabrielle Mota
+
 CREATE TABLE componentes_notas(
 	id_componente INT AUTO_INCREMENT PRIMARY KEY,
 	nome VARCHAR(100) NOT NULL,

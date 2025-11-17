@@ -1,3 +1,5 @@
+-- Autor: Gabrielle Mota, Leonardo Fonseca
+
 CREATE DATABASE IF NOT EXISTS sistema_notadez;
 USE sistema_notadez;
 CREATE TABLE IF NOT EXISTS instituicoes (

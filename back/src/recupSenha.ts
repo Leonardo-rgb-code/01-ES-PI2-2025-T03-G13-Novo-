@@ -1,17 +1,19 @@
+// Autor: Gabrielle Mota
+
 import { getConn } from "./db";
 import  { Router, Request, Response } from "express";
-import dotenv from "dotenv";
+import dotenv from "dotenv"; //salva informações que devem ser ocultadas
 import sgMail from "@sendgrid/mail";
-
+//biblioteca do sendgrid API externa para enviar o email pro usuário
 const router = Router();
 
 dotenv.config();
 
-sgMail.setApiKey(process.env.SENDGRID_TOKEN!);
+sgMail.setApiKey(process.env.SENDGRID_TOKEN!); //pega a api externa que esta do dotenv 
 
 async function sendRecoveryEmail(to: string, token: string) {
   const url = `http://127.0.0.1:5501/front/senha/redefSenha.html?token=${token}`;
-
+  //coloca o roken gerado pelo link do email na url
   const msg = {
     to,
     from: "gabispmota@hotmail.com",
@@ -39,10 +41,7 @@ function gerarStringAleatoria(tamanho: number = 10): string {
   }
 
   return resultado;
-}
-
-console.log(gerarStringAleatoria());
-
+} //função para gerar o token para recuperar a senha
 
 router.post("/", async (req: Request, res: Response) => {
     let dados = req.body;
@@ -53,8 +52,8 @@ router.post("/", async (req: Request, res: Response) => {
             const [rows]: any = await db.execute(
                 'UPDATE usuarios SET tokensenha = ? WHERE email = ?',
                 [token, dados['email']]
-            ); 
-            if (rows.affectedRows == 1) {
+            ); // adiciona na coluna do bd o token que foi gerado
+            if (rows.affectedRows == 1) { //se alguma linha foi adiciona sicginica que deu certo
                 sendRecoveryEmail(dados['email'], token)
                 return res.status(200).send({message:"email enviado."})
             }

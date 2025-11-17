@@ -1,3 +1,5 @@
+// Autor: Gabrielle Mota
+
 import { getConn } from "./db";
 import  {Router, Request, Response } from "express";
 
@@ -38,7 +40,7 @@ router.post("/", async (req: Request, res: Response) => {
             // Busca o email
             const [rows]: any = await db.execute(
                 'UPDATE usuarios SET senha = ? WHERE tokensenha = ?',
-                [dados.senha, dados.token]
+                [dados.senha, dados.token] //substitui a senha antiga pela nova e valida se o token da url é o mesmo que esta no bd
             ); 
             if (rows.affectedRows == 1) {
                 return res.status(200).send({message:"senha alterada."})

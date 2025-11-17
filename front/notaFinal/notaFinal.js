@@ -1,5 +1,7 @@
-document.addEventListener("DOMContentLoaded", () => {
+// <!-- Autor: Gabrielle Mota-->
 
+document.addEventListener("DOMContentLoaded", () => {
+  //verifica se usuário logado pelo localStorage
   function verificarLogin() {
     const usuarioLogado = localStorage.getItem("usuarioLogado");
     if (usuarioLogado !== "true") {
@@ -41,15 +43,15 @@ document.addEventListener("DOMContentLoaded", () => {
   async function carregarInstituicoes() {
     const res = await fetch(`http://localhost:3000/instituicoes?usuarioId=${usuarioId}`);
     const lista = await res.json();
-
-    selectInstituicao.innerHTML = `<option value="">Selecione...</option>`;
+    //carrega as instituições cadastradas nesse id de usuário e mostra no filtro
+    selectInstituicao.innerHTML = `<option value="">Selecione...</option>`; //innerHTML altera, adiciona ou retira algum elemento do html
 
     lista.forEach(inst => {
       const op = document.createElement("option");
       op.value = inst.id_instituicao;
       op.textContent = inst.nome;
       selectInstituicao.appendChild(op);
-    });
+    }); //pega o id e o nome da instituição e coloca nas opções do filtro
   }
 
 
@@ -57,7 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function carregarCursos(instId) {
     const res = await fetch(`http://localhost:3000/cursos?usuarioId=${usuarioId}&instId=${instId}`);
     const lista = await res.json();
-
+    //com o id do uruário e da instituição pega os cursos e coloca nas opções do filtro
     selectCurso.innerHTML = `<option value="">Selecione...</option>`;
 
     lista.forEach(curso => {
@@ -65,9 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
       op.value = curso.id_curso ?? curso.id;
       op.textContent = curso.nome_curso ?? curso.nome;
       selectCurso.appendChild(op);
-    });
+    }); //pega nome e id do curso pra colocacr no filtro
 
-    selectCurso.disabled = false;
+    selectCurso.disabled = false; //habilita o campo do filtro
   }
 
 
@@ -75,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
   async function carregarDisciplinas(cursoId) {
     const res = await fetch(`http://localhost:3000/disciplinas?usuarioId=${usuarioId}&cursoId=${cursoId}`);
     const lista = await res.json();
-
+    // carrega as disciplinas do id daquele usuário e daquele curso
     selectDisciplina.innerHTML = `<option value="">Selecione...</option>`;
 
     lista.forEach(disciplina => {
@@ -85,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
       op.dataset.sigla = disciplina.sigla;
       selectDisciplina.appendChild(op);
     });
+    //coloca a sigla, id e nome no filtro
 
     selectDisciplina.disabled = false;
   }
@@ -108,14 +111,10 @@ document.addEventListener("DOMContentLoaded", () => {
     selectTurma.disabled = false;
   }
 
-
-
   async function carregarComponentes(disciplinaId) {
     const res = await fetch(`http://localhost:3000/componenteNotas?usuarioId=${usuarioId}&disciplinaId=${disciplinaId}`);
     componentes = await res.json();
   }
-
-
 
   async function carregarNotas(turmaId, matricula, componenteId) {
     const res = await fetch(
@@ -145,8 +144,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return await res.json();
   }
 
-
-
   function montarCabecalho() {
     tabelaHead.innerHTML = "";
 
@@ -155,7 +152,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <th>Matrícula</th>
         <th>Nome</th>
     `;
-
+    //adiciona a sigla do componente de notas no cabeçalho, o id pra salvar a nota no bd e o botão para editar ou bloquear edição
     componentes.forEach(c => {
       th += `
         <th style="white-space: nowrap;">
@@ -177,8 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
     tabelaHead.innerHTML = th;
   }
 
-
-
   async function montarTabela(turmaId) {
     const alunos = await carregarAlunos(turmaId);
     tabelaBody.innerHTML = "";
@@ -189,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <td>${aluno.matricula}</td>
           <td>${aluno.nome}</td>
       `;
-
+      //coloca a matrícula e o nome do aluno nas linhas e cria os input com a matrícula e id do componente relacionado
       componentes.forEach(comp => {
         tr += `
           <td>
@@ -198,19 +193,19 @@ document.addEventListener("DOMContentLoaded", () => {
               data-aluno="${aluno.matricula}"
               data-componente="${comp.id_componente}"
               type="number" 
-              step="0.1" min="0" max="10"
+              step="0.1" min="0" max="10" 
               disabled
             >
           </td>
-        `;
+        `; //deixa de 0 a 10 e o step de 0.1
       });
 
       const medias = await buscarMedia(turmaId, aluno.matricula);
       let valorMedia = "-";
       if (medias && medias.length > 0 && medias[0].media !== undefined) {
         valorMedia = medias[0].media;
-      }
-
+      } 
+      //adiciona o valor da média na coluna final
       tr += `
         <td>
           <input class="form-control form-control-sm" disabled value="${valorMedia}">
@@ -221,14 +216,14 @@ document.addEventListener("DOMContentLoaded", () => {
       tabelaBody.innerHTML += tr;
     }
 
-    const inputs = document.querySelectorAll(".nota-input");
-
+    const inputs = document.querySelectorAll(".nota-input"); //seleciona todos os elementos com esse nome
+    
     for (const input of inputs) {
       const dados = await carregarNotas(turmaId, input.dataset.aluno, input.dataset.componente);
       if (dados && dados.length > 0 && dados[0].nota !== undefined) {
         input.value = dados[0].nota;
       }
-    }
+    } //verifica se todas as notas foram preenchidas
 
     verificarNotasPreenchidas();
   }
@@ -238,7 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("click", (e) => {
     const botao = e.target.closest(".toggle-col");
     if (!botao) return;
-
+    //se apertar no botão ele liebra o input relacionado com o id do componente daquela coluna
     const compId = botao.dataset.col;
     const inputs = document.querySelectorAll(`input[data-componente="${compId}"]`);
 
@@ -258,21 +253,21 @@ document.addEventListener("DOMContentLoaded", () => {
   document.addEventListener("input", function (e) {
     if (e.target.classList.contains("nota-input")) {
       let raw = e.target.value;
-      let value = parseFloat(raw);
-
+      let value = parseFloat(raw); //diz que sera um número float
+      
       if (raw === "") return;
       if (isNaN(value)) return;
 
       if (value > 10) e.target.value = 10;
       if (value < 0) e.target.value = 0;
-    }
+    } //verifica se as notas foram preenchidas, precisam ser entre 0 e 10
     verificarNotasPreenchidas();
   });
 
 
 
   selectInstituicao.addEventListener("change", () => {
-    const id = selectInstituicao.value;
+    const id = selectInstituicao.value; //se instituição tiver um valor, habilita os outros filtros
     selectCurso.disabled = true;
     selectDisciplina.disabled = true;
     selectTurma.disabled = true;
@@ -322,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
 btnSalvarNotas.addEventListener("click", async () => {
   if (!cursoIdSelecionado || !turmaIdSelecionada) {
     alert("Selecione curso e turma antes de salvar!");
-    return;
+    return; 
   }
 
   const inputs = document.querySelectorAll(".nota-input");

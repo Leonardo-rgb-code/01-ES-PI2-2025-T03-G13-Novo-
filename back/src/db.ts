@@ -1,6 +1,7 @@
+// Autor: Gabrielle Mota
+
 import mysql, { Pool, PoolConnection } from "mysql2/promise";
-
-
+//importa o mysql e faz a conexão com o servidor
 let pool: Pool | null = null;
 
 export async function initPool(): Promise<void> {
@@ -19,7 +20,6 @@ export async function initPool(): Promise<void> {
 
 /**
  * FUNÇÃO getConn()
- * -------------------
  * Retorna uma conexão ativa do pool.
  */
 export async function getConn(): Promise<PoolConnection> {
@@ -31,7 +31,6 @@ export async function getConn(): Promise<PoolConnection> {
 
 /**
  * FUNÇÃO closePool()
- * ---------------------
  * Fecha o pool quando a aplicação for encerrada.
  */
 export async function closePool(): Promise<void> {
