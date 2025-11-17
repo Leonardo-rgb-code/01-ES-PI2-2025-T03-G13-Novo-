@@ -1,3 +1,5 @@
+-- Autor: Gabrielle Mota
+
 -- Criação do banco de dados
 CREATE DATABASE IF NOT EXISTS sistema_notadez;
 USE sistema_notadez;

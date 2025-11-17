@@ -1,3 +1,5 @@
+<!-- Autor: Gabrielle Mota-->
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -10,29 +12,25 @@
 </head>
 <body class="bg-light">
   <div class="container py-5">
-
     <form>
       <h2 class="text-center mb-4">Alunos</h2>
       <h5 class="text-center mb-4 text-muted">
         Cadastre ou Edite seus Alunos da Turma: <strong id="nomeTurmaTitulo"></strong>
       </h5>
       <h5 class="text-center mb-4 text-muted">Favor preencher todos os campos</h5>
-
-      <!-- Campos -->
+      <!-- Inputs -->
       <div class="row g-3 mb-4">
         <div class="col-md-6">
           <label for="matriculaAluno" class="form-label">Matrícula do Aluno</label>
           <input type="text" class="form-control" id="matriculaAluno" required>
           <div id="erroMatriVazio" class="invalid-feedback d-none">Informe a matrícula.</div>
         </div>
-
         <div class="col-md-6">
           <label for="nomeAluno" class="form-label">Nome do Aluno</label>
           <input type="text" class="form-control" id="nomeAluno" required>
           <div id="erroNomeVazio" class="invalid-feedback d-none">Informe o nome.</div>
         </div>
       </div>
-
       <!-- Botões -->
       <div class="d-flex flex-column mb-4" style="max-width: 220px;">
         <button type="button" id="btnAluno" class="btn btn-outline-secondary btn-sm mb-2">
@@ -48,7 +46,6 @@
         <!-- Input real escondido -->
         <input type="file" id="inputCSV" accept=".csv" class="d-none">
       </div>
-
       <!-- Tabela -->
       <h5 class="mb-3 text-center text-muted">Alunos Cadastrados</h5>
       <div class="table-responsive mb-3">
@@ -63,7 +60,6 @@
           <tbody id="tabelaAlunos"></tbody>
         </table>
       </div>
-
       <!-- Página inicial -->
       <div class="d-flex justify-content-center mt-4">
         <button type="button" id="btnInicial" class="btn btn-outline-secondary">
@@ -71,7 +67,6 @@
         </button>
       </div>
     </form>
-
   </div>
 
   <script src="cadastroAlunos.js"></script>

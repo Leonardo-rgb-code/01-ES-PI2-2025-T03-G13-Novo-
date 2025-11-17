@@ -1,3 +1,5 @@
+-- Autor: Gabrielle Mota
+
 -- BANCO DE DADOS: SISTEMA NOTA DEZ - MÓDULO ALUNOS
 
 -- Criação do banco de dados

@@ -1,3 +1,5 @@
+-- Autor: Gabrielle Motas
+
 -- BANCO DE DADOS COMPLETO: SISTEMA NOTA DEZ
 CREATE TABLE turmas (
 	id_turma INT AUTO_INCREMENT PRIMARY KEY,

@@ -1,3 +1,5 @@
+// Autor: Gabrielle Mota
+
 import { getConn } from "./db";
 import { Router, Request, Response } from "express";
 
